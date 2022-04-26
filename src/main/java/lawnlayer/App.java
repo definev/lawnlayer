@@ -1,13 +1,20 @@
 package lawnlayer;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import lawnlayer.gameObject.Beetle;
+import lawnlayer.gameObject.Worm;
 import lawnlayer.gameObject.GameObject;
 import lawnlayer.gameObject.Player;
+import lawnlayer.utils.EnemyConfig;
+import lawnlayer.utils.EnemyConfig;
 import lawnlayer.utils.GameMap;
 import lawnlayer.utils.GameUtils;
 import lawnlayer.gameObject.TopBar;
+import lawnlayer.utils.LevelConfig;
 import processing.core.PApplet;
 import processing.core.PImage;
 
@@ -32,6 +39,8 @@ public class App extends PApplet {
     public static PImage beetle;
 
     public Integer lives = 3;
+    public ArrayList<LevelConfig> levelConfigs = new ArrayList<>();
+    public LevelConfig currentLevel = null;
 
     public TopBar topBar;
     public ArrayList<GameObject> objects = new ArrayList();
@@ -46,6 +55,11 @@ public class App extends PApplet {
             objects = GameUtils.load(this, this.getClass().getResource("level1.txt").getPath());
             objects.add(new Player(this));
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            levelConfigs = LevelConfig.getConfigs(configPath);
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -66,6 +80,17 @@ public class App extends PApplet {
     }
 
     public void draw() {
+        if (currentLevel == null) {
+            currentLevel = levelConfigs.get(levelConfigs.size() - 1);
+            for (EnemyConfig enemyConfig : currentLevel.enemies) {
+                if (enemyConfig.type == 0) {
+                    objects.add(new Worm(this));
+                }
+                if (enemyConfig.type == 1) {
+                    objects.add(new Beetle(this));
+                }
+            }
+        }
         if (queueObjects != null) {
             objects = queueObjects;
             queueObjects = null;

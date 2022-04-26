@@ -21,8 +21,7 @@ public abstract class GameObject {
 
     public void setUp() {}
 
-    public void draw() {
-        drawCoors();
+    protected void collisionCheck() {
         if (needToCheckCollision) {
             for (GameObject object : ((App) app).objects) {
                 var collisionPoints = collideAt(object);
@@ -31,6 +30,11 @@ public abstract class GameObject {
                 }
             }
         }
+    }
+
+    public void draw() {
+        drawCoors();
+        collisionCheck();
     }
 
     public void addCoor(Coordinate coor) {

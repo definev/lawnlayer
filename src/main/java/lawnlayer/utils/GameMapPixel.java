@@ -235,44 +235,4 @@ public class GameMapPixel {
                 return;
         }
     }
-
-    public ArrayList<ArrayList<Character>> toCharacterState() {
-        ArrayList<ArrayList<Character>> maps = new ArrayList();
-        for (int i = 0; i < 3; i++) {
-            ArrayList<Character> map = new ArrayList();
-            for (int j = 0; j < 3; j++) {
-                map.add(' ');
-            }
-            maps.add(map);
-        }
-
-        Coordinate[] coors = null;
-
-        switch (state) {
-            case topLeft:
-                coors = topLeftCoors;
-                break;
-            case bottomLeft:
-                coors = bottomLeftCoors;
-                break;
-            case topRight:
-                coors = topRightCoors;
-                break;
-            case bottomRight:
-                coors = bottomRightCoors;
-                break;
-            case horizontal:
-                coors = horizontalCoors;
-                break;
-            case vertical:
-                coors = verticalCoors;
-                break;
-        }
-
-        for (Coordinate coor : coors) {
-            maps.get(coor.y).set(coor.x, symbol);
-        }
-
-        return maps;
-    }
 }

@@ -4,9 +4,12 @@ import java.nio.charset.CoderResult;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
 import java.util.Vector;
 
 import lawnlayer.App;
+import lawnlayer.gameObject.Beetle;
+import lawnlayer.gameObject.Worm;
 import lawnlayer.gameObject.GameObject;
 import lawnlayer.gameObject.Grass;
 import lawnlayer.gameObject.Player;
@@ -30,6 +33,20 @@ public class GameMap {
 
     public GameMapPixel get(Coordinate coordinate) {
         return masterMap.get(coordinate.y).get(coordinate.x);
+    }
+
+    public Coordinate randomizeLocation() {
+        var rand = new Random();
+        ArrayList<Coordinate> emptyList = new ArrayList<>();
+
+        for (int i = 0; i < masterMap.size(); i++) {
+            for (int j = 0; j < masterMap.get(0).size(); j++) {
+                if (masterMap.get(i).get(j).symbol == ' ') {
+                    emptyList.add(new Coordinate(j, i));
+                }
+            }
+        }
+        return emptyList.get(rand.nextInt(emptyList.size()));
     }
 
     public ArrayList<ArrayList<Character>> getRawMap() {
@@ -162,6 +179,20 @@ public class GameMap {
                     masterMap.set(coor.y, map);
                 }
                 break;
+            case "Worm":
+                for (Coordinate coor : object.coors) {
+                    var map = masterMap.get(coor.y);
+                    map.set(coor.x, new GameMapPixel(Worm.symbol, PixelState.full));
+                    masterMap.set(coor.y, map);
+                }
+                break;
+            case "Beetle":
+                for (Coordinate coor : object.coors) {
+                    var map = masterMap.get(coor.y);
+                    map.set(coor.x, new GameMapPixel(Beetle.symbol, PixelState.full));
+                    masterMap.set(coor.y, map);
+                }
+                break;
             case "Grass":
                 for (Coordinate coor : object.coors) {
                     var map = masterMap.get(coor.y);
@@ -248,19 +279,40 @@ public class GameMap {
                 startFirstCoordinate = new Coordinate(absoluteCoordinate.x, absoluteCoordinate.y + 1);
                 startSecondCoordinate = new Coordinate(absoluteCoordinate.x + 2, absoluteCoordinate.y + 1);
                 break;
+            case full:
+                startFirstCoordinate = new Coordinate(absoluteCoordinate.x + 1, absoluteCoordinate.y + 1);
+                startSecondCoordinate = new Coordinate(absoluteCoordinate.x + 1, absoluteCoordinate.y + 1);
+                break;
+                
         }
 
-        loopFloodFill(firstRawMap, startFirstCoordinate.x, startFirstCoordinate.y);
-        GameUtils.logMap(firstRawMap);
-        loopFloodFill(secondRawMap, startSecondCoordinate.x, startSecondCoordinate.y);
-        GameUtils.logMap(secondRawMap);
+        var firstResult = loopFloodFill(firstRawMap, startFirstCoordinate.x, startFirstCoordinate.y);
+        var secondResult = loopFloodFill(secondRawMap, startSecondCoordinate.x, startSecondCoordinate.y);
+
 
         transformRawMap(firstRawMap, Player.symbol, Grass.symbol);
         transformRawMap(secondRawMap, Player.symbol, Grass.symbol);
 
-        var firstMasterMap = fromRawMap(firstRawMap);
-        masterMap = firstMasterMap.masterMap;
-        var secondMasterMap = fromRawMap(secondRawMap);
+        var firstMasterMap = fromRawMap(firstResult.result);
+        var secondMasterMap = fromRawMap(secondResult.result);
+
+        if (!firstResult.isSuccess) {
+            if (secondMasterMap.evaluatePercent(Grass.symbol) > 80) {
+                masterMap = firstMasterMap.masterMap;
+            } else {
+                masterMap = secondMasterMap.masterMap;
+            }
+            return;
+        }
+        if (!secondResult.isSuccess) {
+            if (firstMasterMap.evaluatePercent(Grass.symbol) > 80) {
+                masterMap = secondMasterMap.masterMap;
+            } else {
+                masterMap = firstMasterMap.masterMap;
+            }
+            return;
+        }
+
 
         var cmp = firstMasterMap.compareTo(secondMasterMap);
 
@@ -274,37 +326,63 @@ public class GameMap {
     }
 
     private boolean isValid(ArrayList<ArrayList<Character>> character, Integer x, Integer y) {
-        if (character.get(y).get(x) == Grass.symbol || character.get(y).get(x) == Wall.symbol || character.get(y).get(x) == Player.symbol) return false;
+        if (character.get(y).get(x) == Grass.symbol || character.get(y).get(x) == Wall.symbol || character.get(y).get(x) == Player.symbol)
+            return false;
         if (x <= 2 || x >= GameUtils.MAP_WIDTH * 3 - 3) return false;
         if (y <= 2 || y >= GameUtils.MAP_HEIGHT * 3 - 3) return false;
         return true;
     }
 
-    private void loopFloodFill(ArrayList<ArrayList<Character>> character, Integer x, Integer y) {
+    private FloodFillResult loopFloodFill(ArrayList<ArrayList<Character>> character, Integer x, Integer y) {
+        ArrayList<ArrayList<Character>> replicateCharacter = new ArrayList<>();
+        for (int i = 0; i < character.size(); i++) {
+            replicateCharacter.add(new ArrayList<>());
+            for (int j = 0; j < character.get(i).size(); j++) {
+                replicateCharacter.get(i).add(character.get(i).get(j));
+            }
+        }
+
         Vector<Coordinate> queue = new Vector<>();
         queue.add(new Coordinate(x, y));
+        if (character.get(y).get(x) == Worm.symbol) {
+            return new FloodFillResult(false, replicateCharacter);
+        }
         character.get(y).set(x, Player.symbol);
 
         while (queue.size() > 0) {
             var last = queue.get(queue.size() - 1);
             queue.remove(queue.size() - 1);
             if (isValid(character, last.x - 1, last.y)) {
+                if (character.get(last.y).get(last.x - 1) == Worm.symbol) {
+                    return new FloodFillResult(false, replicateCharacter);
+                }
                 character.get(last.y).set(last.x - 1, Player.symbol);
                 queue.add(new Coordinate(last.x - 1, last.y));
             }
             if (isValid(character, last.x + 1, last.y)) {
+                if (character.get(last.y).get(last.x + 1) == Worm.symbol) {
+                    return new FloodFillResult(false, replicateCharacter);
+                }
                 character.get(last.y).set(last.x + 1, Player.symbol);
                 queue.add(new Coordinate(last.x + 1, last.y));
             }
             if (isValid(character, last.x, last.y - 1)) {
+                if (character.get(last.y - 1).get(last.x) == Worm.symbol) {
+                    return new FloodFillResult(false, replicateCharacter);
+                }
                 character.get(last.y - 1).set(last.x, Player.symbol);
                 queue.add(new Coordinate(last.x, last.y - 1));
             }
             if (isValid(character, last.x, last.y + 1)) {
+                if (character.get(last.y + 1).get(last.x) == Worm.symbol) {
+                    return new FloodFillResult(false, replicateCharacter);
+                }
                 character.get(last.y + 1).set(last.x, Player.symbol);
                 queue.add(new Coordinate(last.x, last.y + 1));
             }
         }
+
+        return new FloodFillResult(true, character);
     }
 
     // Recursive way make JVM overflow (This method is unusable)
@@ -333,7 +411,7 @@ public class GameMap {
             }
         }
 
-        return Math.round((percent.floatValue() / ((GameUtils.MAP_WIDTH - 1) * (GameUtils.MAP_HEIGHT - 1))) * 100);
+        return Math.round((percent.floatValue() / ((GameUtils.MAP_WIDTH - 1) * (GameUtils.MAP_HEIGHT - 1))) * 100 / 95 * 100);
     }
 
     public Integer compareTo(GameMap map) {
@@ -351,6 +429,7 @@ public class GameMap {
         Wall wall = null;
         Grass grass = null;
         Player player = null;
+        ArrayList<GameObject> enemies = new ArrayList<>();
         for (int i = 0; i < masterMap.size(); i += 1) {
             for (int j = 0; j < masterMap.get(0).size(); j += 1) {
                 var character = masterMap.get(i).get(j);
@@ -372,12 +451,27 @@ public class GameMap {
                     }
                     wall.addCoor(new Coordinate(j, i));
                 }
+                if (character.symbol == Worm.symbol) {
+                    var worm = new Worm(app);
+                    worm.coors = new ArrayList<>();
+                    worm.addCoor(new Coordinate(j, i));
+                    enemies.add(worm);
+                }
+                if (character.symbol == Beetle.symbol) {
+                    var beetle = new Beetle(app);
+                    beetle.coors = new ArrayList<>();
+                    beetle.addCoor(new Coordinate(j, i));
+                    enemies.add(beetle);
+                }
             }
         }
 
         if (wall != null) objects.add(wall);
         if (grass != null) objects.add(grass);
         if (player != null) objects.add(player);
+        for (GameObject object : enemies) {
+            objects.add(object);
+        }
 
         return objects;
     }

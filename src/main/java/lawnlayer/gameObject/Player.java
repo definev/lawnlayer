@@ -137,13 +137,13 @@ public class Player extends GameObject {
 
     /// ON DEAD
     private void onDeadUpdate() {
-        if (coors.size() == 1) {
+        if (redFlags.size() == coors.size()) {
             markRelive();
             return;
         }
         var canRefresh = frameCount % DEAD_FRAME == DEAD_FRAME - 1;
         if (canRefresh) {
-            coors.remove(coors.size() - 1);
+            redFlags.add(redFlags.size());
         }
     }
 
@@ -218,6 +218,10 @@ public class Player extends GameObject {
             var queueObjects = newMap.parse((App) app);
             queueObjects.add(this);
             ((App) app).queueObjects = queueObjects;
+        }
+
+        if (object.debugName.equals("Worm")) {
+            markDied();
         }
     }
 }
