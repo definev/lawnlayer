@@ -1,0 +1,44 @@
+Date : 2022-04-26 00:55:28
+Directory : /Users/daiduong/Desktop/Project/Java/lawnlayer/src
+Total : 12 files,  1036 codes, 7 comments, 191 blanks, all 1234 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Java     |         12 |      1,036 |          7 |        191 |      1,234 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                              | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                 |         12 |      1,036 |          7 |        191 |      1,234 |
+| main                                                                                              |         11 |      1,027 |          7 |        185 |      1,219 |
+| main/java                                                                                         |         11 |      1,027 |          7 |        185 |      1,219 |
+| main/java/lawnlayer                                                                               |         11 |      1,027 |          7 |        185 |      1,219 |
+| main/java/lawnlayer/gameObject                                                                    |          5 |        298 |          3 |         63 |        364 |
+| main/java/lawnlayer/utils                                                                         |          5 |        653 |          4 |        102 |        759 |
+| test                                                                                              |          1 |          9 |          0 |          6 |         15 |
+| test/java                                                                                         |          1 |          9 |          0 |          6 |         15 |
+| test/java/lawnlayer                                                                               |          1 |          9 |          0 |          6 |         15 |
++---------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                                          | language | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| /Users/daiduong/Desktop/Project/Java/lawnlayer/src/main/java/lawnlayer/App.java                   | Java     |         76 |          0 |         20 |         96 |
+| /Users/daiduong/Desktop/Project/Java/lawnlayer/src/main/java/lawnlayer/gameObject/GameObject.java | Java     |         43 |          0 |         13 |         56 |
+| /Users/daiduong/Desktop/Project/Java/lawnlayer/src/main/java/lawnlayer/gameObject/Grass.java      | Java     |         19 |          0 |          5 |         24 |
+| /Users/daiduong/Desktop/Project/Java/lawnlayer/src/main/java/lawnlayer/gameObject/Player.java     | Java     |        196 |          3 |         33 |        232 |
+| /Users/daiduong/Desktop/Project/Java/lawnlayer/src/main/java/lawnlayer/gameObject/TopBar.java     | Java     |         22 |          0 |          7 |         29 |
+| /Users/daiduong/Desktop/Project/Java/lawnlayer/src/main/java/lawnlayer/gameObject/Wall.java       | Java     |         18 |          0 |          5 |         23 |
+| /Users/daiduong/Desktop/Project/Java/lawnlayer/src/main/java/lawnlayer/utils/Coordinate.java      | Java     |         46 |          0 |         12 |         58 |
+| /Users/daiduong/Desktop/Project/Java/lawnlayer/src/main/java/lawnlayer/utils/GameMap.java         | Java     |        272 |          0 |         41 |        313 |
+| /Users/daiduong/Desktop/Project/Java/lawnlayer/src/main/java/lawnlayer/utils/GameMapPixel.java    | Java     |        245 |          0 |         34 |        279 |
+| /Users/daiduong/Desktop/Project/Java/lawnlayer/src/main/java/lawnlayer/utils/GameUtils.java       | Java     |         82 |          4 |         13 |         99 |
+| /Users/daiduong/Desktop/Project/Java/lawnlayer/src/main/java/lawnlayer/utils/MoveDirection.java   | Java     |          8 |          0 |          2 |         10 |
+| /Users/daiduong/Desktop/Project/Java/lawnlayer/src/test/java/lawnlayer/SampleTest.java            | Java     |          9 |          0 |          6 |         15 |
+| Total                                                                                             |          |      1,036 |          7 |        191 |      1,234 |
++---------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
