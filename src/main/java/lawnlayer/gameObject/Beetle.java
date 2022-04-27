@@ -29,7 +29,7 @@ public class Beetle extends Worm {
     void onCollision(GameObject object, ArrayList<Coordinate> points) {
         super.onCollision(object, points);
 
-        if (object.debugName == "Grass") {
+        if (object.debugName.equals("Grass")) {
             object.coors.removeAll(points);
         }
     }

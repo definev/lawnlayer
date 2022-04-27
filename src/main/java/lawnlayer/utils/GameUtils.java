@@ -80,7 +80,8 @@ public class GameUtils {
         return new Coordinate(coor.x * App.SPRITE_SIZE, coor.y * App.SPRITE_SIZE + 80);
     }
 
-    public static MoveDirection getDirection(Coordinate before, Coordinate after) {
+    public static MoveDirection getDirection(MoveDirection lastMovedirection, Coordinate before, Coordinate after) {
+        if (before == null || after == null) return lastMovedirection;
         if (before.x.equals(after.x)) {
             if (before.y < after.y) {
                 return MoveDirection.down;

@@ -14,9 +14,10 @@ import java.util.ArrayList;
 import processing.data.JSONObject;
 
 public class LevelConfig {
-    public LevelConfig(String outlay, ArrayList<EnemyConfig> enemies) {
+    public LevelConfig(String outlay, ArrayList<EnemyConfig> enemies, Integer lives) {
         this.outlay = outlay;
         this.enemies = enemies;
+        this.lives = lives;
     }
 
     public static ArrayList<LevelConfig> getConfigs(String path) throws FileNotFoundException {
@@ -34,7 +35,7 @@ public class LevelConfig {
                 enemies.add(new EnemyConfig(jsn1.get("type").getAsInt(), jsn1.get("spawn").getAsString()));
             }
 
-            levelConfigs.add(new LevelConfig(jsn.get("outlay").getAsString(), enemies));
+            levelConfigs.add(new LevelConfig(jsn.get("outlay").getAsString(), enemies, obj.get("lives").getAsInt()));
         }
 
         return levelConfigs;
@@ -42,5 +43,6 @@ public class LevelConfig {
 
     public String outlay;
     public ArrayList<EnemyConfig> enemies;
+    public Integer lives;
 }
 

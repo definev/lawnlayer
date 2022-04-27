@@ -20,7 +20,15 @@ public class Worm extends GameObject {
 
     public EnemyMoveDirection moveDirection = EnemyMoveDirection.topLeft;
     Integer frameCount = 0;
-    Integer speed = 20;
+    Integer speed = 52;
+    public void setSpeed(Integer speed) {
+        this.speed = speed;
+    }
+
+    private boolean canUpdate() {
+        if (speed == 0) return false;
+        return frameCount % (App.FPS - speed) == 0;
+    }
 
     private void onFrameUpdate() {
         var canRefresh = frameCount % App.FPS == App.FPS - 1;
@@ -97,13 +105,13 @@ public class Worm extends GameObject {
                         rightValid = true;
                     }
                 }
-                if (bottomValid && rightValid) {
+                if (bottomValid && rightValid && moveDirection == EnemyMoveDirection.bottomRight) {
                     moveDirection = GameUtils.getOppositeMove(moveDirection);
-                } else if (bottomValid && leftValid) {
+                } else if (bottomValid && leftValid && moveDirection == EnemyMoveDirection.bottomLeft) {
                     moveDirection = GameUtils.getOppositeMove(moveDirection);
-                } else if (upValid && rightValid) {
+                } else if (upValid && rightValid && moveDirection != EnemyMoveDirection.topLeft) {
                     moveDirection = GameUtils.getOppositeMove(moveDirection);
-                } else if (upValid && leftValid) {
+                } else if (upValid && leftValid && moveDirection != EnemyMoveDirection.topRight) {
                     moveDirection = GameUtils.getOppositeMove(moveDirection);
                 } else if (bottomValid || upValid) {
                     switch (moveDirection) {
@@ -157,7 +165,7 @@ public class Worm extends GameObject {
     }
 
     private void onWormMove() {
-        if (frameCount % speed == 0) {
+        if (canUpdate()) {
             var last = coors.get(0);
             coors = new ArrayList<>();
             switch (moveDirection) {

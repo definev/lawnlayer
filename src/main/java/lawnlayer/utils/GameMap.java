@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.Vector;
 
 import lawnlayer.App;
+import lawnlayer.gameObject.Ant;
 import lawnlayer.gameObject.Beetle;
 import lawnlayer.gameObject.Worm;
 import lawnlayer.gameObject.GameObject;
@@ -123,13 +124,13 @@ public class GameMap {
                     }
 
                     if (i == 0) {
-                        prev = predictDirection(coor, GameUtils.getDirection(coor, next));
+                        prev = predictDirection(coor, GameUtils.getDirection(MoveDirection.left, coor, next));
                     }
                     if (i == object.coors.size() - 1) {
-                        next = predictDirection(coor, GameUtils.getDirection(coor, prev));
+                        next = predictDirection(coor, GameUtils.getDirection(MoveDirection.left, coor, prev));
                     }
 
-                    var prevDirection = GameUtils.getDirection(prev, coor);
+                    var prevDirection = GameUtils.getDirection(MoveDirection.left, prev, coor);
                     if (next == null) {
                         if (prevDirection == MoveDirection.left) {
                             map.set(coor.x, new GameMapPixel(Player.symbol, PixelState.full));
@@ -137,7 +138,7 @@ public class GameMap {
                         masterMap.set(coor.y, map);
                         return;
                     }
-                    var nextDirection = GameUtils.getDirection(coor, next);
+                    var nextDirection = GameUtils.getDirection(prevDirection, coor, next);
 
                     if (prevDirection == MoveDirection.left && nextDirection == MoveDirection.up) {
                         map.set(coor.x, new GameMapPixel(Player.symbol, PixelState.topRight));
@@ -232,6 +233,27 @@ public class GameMap {
                 for (Coordinate coor : object.coors) {
                     var map = masterMap.get(coor.y);
                     map.set(coor.x, new GameMapPixel(Wall.symbol, PixelState.full));
+                    masterMap.set(coor.y, map);
+                }
+                break;
+            case "Ant":
+                for (Coordinate coor : object.coors) {
+                    var map = masterMap.get(coor.y);
+                    var ant = (Ant) object;
+                    switch (ant.direction) {
+                        case up:
+                            map.set(coor.x, new GameMapPixel(Ant.symbol, PixelState.topLeft));
+                            break;
+                        case down:
+                            map.set(coor.x, new GameMapPixel(Ant.symbol, PixelState.bottomLeft));
+                            break;
+                        case left:
+                            map.set(coor.x, new GameMapPixel(Ant.symbol, PixelState.topRight));
+                            break;
+                        case right:
+                            map.set(coor.x, new GameMapPixel(Ant.symbol, PixelState.bottomRight));
+                            break;
+                    }
                     masterMap.set(coor.y, map);
                 }
                 break;
@@ -518,6 +540,30 @@ public class GameMap {
                     beetle.coors = new ArrayList<>();
                     beetle.addCoor(new Coordinate(j, i));
                     enemies.add(beetle);
+                }
+                if (character.symbol == Ant.symbol) {
+                    if (wall == null) {
+                        wall = new Wall(app);
+                    }
+                    wall.addCoor(new Coordinate(j, i));
+                    var ant = new Ant(app);
+                    switch (character.state) {
+                        case topLeft:
+                            ant.direction = MoveDirection.up;
+                            break;
+                        case bottomLeft:
+                            ant.direction = MoveDirection.down;
+                            break;
+                        case topRight:
+                            ant.direction = MoveDirection.left;
+                            break;
+                        case bottomRight:
+                            ant.direction = MoveDirection.right;
+                            break;
+                    }
+                    ant.coors = new ArrayList<>();
+                    ant.addCoor(new Coordinate(j, i));
+                    enemies.add(ant);
                 }
             }
         }

@@ -198,6 +198,9 @@ public class Player extends GameObject {
     @Override
     void onCollision(GameObject object, ArrayList<Coordinate> points) {
         super.onCollision(object, points);
+        if (object.debugName.equals("Ant")) {
+            markDied();
+        }
         if (object.debugName.equals("Grass") || object.debugName.equals("Wall")) {
             if (isInSafeZone()) return;
             if (coors.size() < 2) return;
@@ -205,7 +208,7 @@ public class Player extends GameObject {
 
             var before = coors.get(coors.size() - 2);
             var after = coors.get(coors.size() - 1);
-            var lastDirection = GameUtils.getDirection(before, after);
+            var lastDirection = GameUtils.getDirection(direction, before, after);
 
             GameMap transformMap = cloneMap.clone();
             transformMap.relativeFloodFill(before, lastDirection);
