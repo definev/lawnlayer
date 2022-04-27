@@ -135,10 +135,10 @@ public class GameMapPixel {
         var initY = coordinate.y * 3;
 
         GameMapPixel pixel = null;
-        ArrayList<ArrayList<Character>> characters = new ArrayList();
+        ArrayList<ArrayList<Character>> characters = new ArrayList<>();
 
         for (int i = 0; i < 3; i++) {
-            ArrayList<Character> character = new ArrayList();
+            ArrayList<Character> character = new ArrayList<Character>();
             for (int j = 0; j < 3; j++) {
                 character.add(' ');
             }

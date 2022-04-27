@@ -220,7 +220,7 @@ public class Player extends GameObject {
             ((App) app).queueObjects = queueObjects;
         }
 
-        if (object.debugName.equals("Worm")) {
+        if (object.debugName.equals("Worm") || object.debugName.equals("Beetle")) {
             markDied();
         }
     }

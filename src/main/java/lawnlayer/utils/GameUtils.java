@@ -104,4 +104,18 @@ public class GameUtils {
             System.out.println();
         }
     }
+
+    public static EnemyMoveDirection getOppositeMove(EnemyMoveDirection direction) {
+        switch (direction) {
+            case topLeft:
+                return EnemyMoveDirection.bottomRight;
+            case topRight:
+                return EnemyMoveDirection.bottomLeft;
+            case bottomLeft:
+                return EnemyMoveDirection.topRight;
+            case bottomRight:
+                return EnemyMoveDirection.topLeft;
+        }
+        return direction;
+    }
 }

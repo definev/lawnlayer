@@ -54,4 +54,9 @@ public class Coordinate {
     public int hashCode() {
         return Objects.hash(x, y);
     }
+
+    public boolean isEdge() {
+        if ((x == 0 || x == GameUtils.MAP_WIDTH - 1) && (y == 0 || y == GameUtils.MAP_HEIGHT - 1)) return true;
+        return false;
+    }
 }

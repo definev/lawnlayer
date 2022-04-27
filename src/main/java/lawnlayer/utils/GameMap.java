@@ -182,15 +182,43 @@ public class GameMap {
             case "Worm":
                 for (Coordinate coor : object.coors) {
                     var map = masterMap.get(coor.y);
-                    map.set(coor.x, new GameMapPixel(Worm.symbol, PixelState.full));
-                    masterMap.set(coor.y, map);
+                    var worm = (Worm) object;
+
+                    switch (worm.moveDirection) {
+                        case topLeft:
+                            map.set(coor.x, new GameMapPixel(Worm.symbol, PixelState.topLeft));
+                            break;
+                        case topRight:
+                            map.set(coor.x, new GameMapPixel(Worm.symbol, PixelState.topRight));
+                            break;
+                        case bottomLeft:
+                            map.set(coor.x, new GameMapPixel(Worm.symbol, PixelState.bottomLeft));
+                            break;
+                        case bottomRight:
+                            map.set(coor.x, new GameMapPixel(Worm.symbol, PixelState.bottomRight));
+                            break;
+                    }
                 }
                 break;
             case "Beetle":
                 for (Coordinate coor : object.coors) {
                     var map = masterMap.get(coor.y);
-                    map.set(coor.x, new GameMapPixel(Beetle.symbol, PixelState.full));
-                    masterMap.set(coor.y, map);
+                    var beetle = (Beetle) object;
+
+                    switch (beetle.moveDirection) {
+                        case topLeft:
+                            map.set(coor.x, new GameMapPixel(Beetle.symbol, PixelState.topLeft));
+                            break;
+                        case topRight:
+                            map.set(coor.x, new GameMapPixel(Beetle.symbol, PixelState.topRight));
+                            break;
+                        case bottomLeft:
+                            map.set(coor.x, new GameMapPixel(Beetle.symbol, PixelState.bottomLeft));
+                            break;
+                        case bottomRight:
+                            map.set(coor.x, new GameMapPixel(Beetle.symbol, PixelState.bottomRight));
+                            break;
+                    }
                 }
                 break;
             case "Grass":
@@ -353,28 +381,28 @@ public class GameMap {
             var last = queue.get(queue.size() - 1);
             queue.remove(queue.size() - 1);
             if (isValid(character, last.x - 1, last.y)) {
-                if (character.get(last.y).get(last.x - 1) == Worm.symbol) {
+                if (character.get(last.y).get(last.x - 1) == Worm.symbol || character.get(last.y).get(last.x - 1) == Beetle.symbol) {
                     return new FloodFillResult(false, replicateCharacter);
                 }
                 character.get(last.y).set(last.x - 1, Player.symbol);
                 queue.add(new Coordinate(last.x - 1, last.y));
             }
             if (isValid(character, last.x + 1, last.y)) {
-                if (character.get(last.y).get(last.x + 1) == Worm.symbol) {
+                if (character.get(last.y).get(last.x + 1) == Worm.symbol || character.get(last.y).get(last.x + 1) == Beetle.symbol) {
                     return new FloodFillResult(false, replicateCharacter);
                 }
                 character.get(last.y).set(last.x + 1, Player.symbol);
                 queue.add(new Coordinate(last.x + 1, last.y));
             }
             if (isValid(character, last.x, last.y - 1)) {
-                if (character.get(last.y - 1).get(last.x) == Worm.symbol) {
+                if (character.get(last.y - 1).get(last.x) == Worm.symbol || character.get(last.y - 1).get(last.x) == Beetle.symbol) {
                     return new FloodFillResult(false, replicateCharacter);
                 }
                 character.get(last.y - 1).set(last.x, Player.symbol);
                 queue.add(new Coordinate(last.x, last.y - 1));
             }
             if (isValid(character, last.x, last.y + 1)) {
-                if (character.get(last.y + 1).get(last.x) == Worm.symbol) {
+                if (character.get(last.y + 1).get(last.x) == Worm.symbol || character.get(last.y + 1).get(last.x) == Beetle.symbol) {
                     return new FloodFillResult(false, replicateCharacter);
                 }
                 character.get(last.y + 1).set(last.x, Player.symbol);
@@ -453,12 +481,40 @@ public class GameMap {
                 }
                 if (character.symbol == Worm.symbol) {
                     var worm = new Worm(app);
+                    switch (character.state) {
+                        case topLeft:
+                            worm.moveDirection = EnemyMoveDirection.topLeft;
+                            break;
+                        case topRight:
+                            worm.moveDirection = EnemyMoveDirection.topRight;
+                            break;
+                        case bottomLeft:
+                            worm.moveDirection = EnemyMoveDirection.bottomLeft;
+                            break;
+                        case bottomRight:
+                            worm.moveDirection = EnemyMoveDirection.bottomRight;
+                            break;
+                    }
                     worm.coors = new ArrayList<>();
                     worm.addCoor(new Coordinate(j, i));
                     enemies.add(worm);
                 }
                 if (character.symbol == Beetle.symbol) {
                     var beetle = new Beetle(app);
+                    switch (character.state) {
+                        case topLeft:
+                            beetle.moveDirection = EnemyMoveDirection.topLeft;
+                            break;
+                        case topRight:
+                            beetle.moveDirection = EnemyMoveDirection.topRight;
+                            break;
+                        case bottomLeft:
+                            beetle.moveDirection = EnemyMoveDirection.bottomLeft;
+                            break;
+                        case bottomRight:
+                            beetle.moveDirection = EnemyMoveDirection.bottomRight;
+                            break;
+                    }
                     beetle.coors = new ArrayList<>();
                     beetle.addCoor(new Coordinate(j, i));
                     enemies.add(beetle);
@@ -469,9 +525,7 @@ public class GameMap {
         if (wall != null) objects.add(wall);
         if (grass != null) objects.add(grass);
         if (player != null) objects.add(player);
-        for (GameObject object : enemies) {
-            objects.add(object);
-        }
+        objects.addAll(enemies);
 
         return objects;
     }
@@ -486,7 +540,7 @@ public class GameMap {
             newMasterMap.add(line);
         }
         for (int i = 0; i < GameUtils.MAP_HEIGHT; i++) {
-            Character symbol = ' ';
+            char symbol = ' ';
             for (int j = 0; j < GameUtils.MAP_WIDTH; j++) {
                 if ((j == 0 || j == GameUtils.MAP_WIDTH - 1) && symbol == ' ') {
                     symbol = 'X';
