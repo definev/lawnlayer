@@ -1,4 +1,4 @@
-package lawnlayer.utils;
+package lawnlayer.utils.direction;
 
 public enum EnemyMoveDirection {
     topRight,

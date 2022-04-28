@@ -1,30 +1,30 @@
 package lawnlayer.gameObject;
 
 import java.util.ArrayList;
-import java.util.Timer;
 
 import lawnlayer.App;
 import lawnlayer.utils.Coordinate;
-import processing.core.PApplet;
 
-public abstract class GameObject {
-    GameObject(App app, String debugName) {
+public abstract class BaseGameObject {
+    public BaseGameObject(App app, String className) {
         this.app = app;
-        this.debugName = debugName;
-        initCoor();
+        this.className = className;
+        initCoordinate();
     }
 
     protected App app;
 
-    protected void initCoor() {}
+    protected void initCoordinate() {
+    }
 
-    protected abstract void drawCoors();
+    protected abstract void drawCoordinates();
 
-    public void setUp() {}
+    public void setUp() {
+    }
 
-    protected void collisionCheck() {
-        if (needToCheckCollision) {
-            for (GameObject object : app.objects) {
+    protected void onCollisionCheck() {
+        if (checkCollision) {
+            for (BaseGameObject object : app.objects) {
                 var collisionPoints = collideAt(object);
                 if (!collisionPoints.isEmpty()) {
                     onCollision(object, collisionPoints);
@@ -34,31 +34,32 @@ public abstract class GameObject {
     }
 
     public void draw() {
-        drawCoors();
-        collisionCheck();
+        drawCoordinates();
+        onCollisionCheck();
     }
 
-    public void addCoor(Coordinate coor) {
-        coors.add(coor);
+    public void addCoordinate(Coordinate coordinate) {
+        coordinatedinates.add(coordinate);
     }
 
-    public ArrayList<Coordinate> coors = new ArrayList();
-    public String debugName;
-    protected Boolean needToCheckCollision = false;
+    public ArrayList<Coordinate> coordinatedinates = new ArrayList();
+    public String className;
+    protected Boolean checkCollision = false;
 
-    public ArrayList<Coordinate> collideAt(GameObject object) {
+    public ArrayList<Coordinate> collideAt(BaseGameObject object) {
         var points = new ArrayList<Coordinate>();
-        for (Coordinate coor : object.coors) {
-            if (coors.contains(coor)) {
-                points.add(coor);
+        for (Coordinate coordinate : object.coordinatedinates) {
+            if (coordinatedinates.contains(coordinate)) {
+                points.add(coordinate);
             }
         }
         return points;
     }
 
-    void onCollision(GameObject object, ArrayList<Coordinate> points) {}
+    protected void onCollision(BaseGameObject object, ArrayList<Coordinate> points) {
+    }
 
-    void selfDestroy() {
+    protected void selfDestroy() {
         app.deleteQueue.add(this);
     }
 }

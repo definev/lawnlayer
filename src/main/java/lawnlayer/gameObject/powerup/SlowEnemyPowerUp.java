@@ -1,4 +1,4 @@
-package lawnlayer.gameObject;
+package lawnlayer.gameObject.powerup;
 
 import java.util.ArrayList;
 import java.util.TimerTask;
@@ -7,6 +7,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import lawnlayer.App;
+import lawnlayer.gameObject.BaseGameObject;
 import lawnlayer.gameObject.enemy.AntEnemy;
 import lawnlayer.gameObject.enemy.BeetleEnermy;
 import lawnlayer.gameObject.enemy.WormEnemy;
@@ -48,11 +49,11 @@ public class SlowEnemyPowerUp extends BaseGameObject {
 
     @Override
     protected void initCoordinate() {
-        coordinates.add((app).masterMap.randomizeLocation());
+        coordinatedinates.add((app).masterMap.randomizeLocation());
     }
 
     @Override
-    void onCollision(BaseGameObject object, ArrayList<Coordinate> points) {
+    protected void onCollision(BaseGameObject object, ArrayList<Coordinate> points) {
         if (object.className == "Player") {
             var game = app;
             for (BaseGameObject baseGameObject : game.objects) {
@@ -76,8 +77,8 @@ public class SlowEnemyPowerUp extends BaseGameObject {
 
     @Override
     protected void drawCoordinates() {
-        for (Coordinate coor : coordinates) {
-            var transformedCoor = GameUtils.transformCoor(coor);
+        for (Coordinate coordinate : coordinatedinates) {
+            var transformedCoor = GameUtils.transformCoor(coordinate);
             app.image(App.slowPowerUp, transformedCoor.x, transformedCoor.y, 20, 20);
         }
     }

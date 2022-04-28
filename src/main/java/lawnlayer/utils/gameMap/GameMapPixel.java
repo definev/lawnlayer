@@ -1,6 +1,8 @@
-package lawnlayer.utils;
+package lawnlayer.utils.gameMap;
 
 import java.util.ArrayList;
+
+import lawnlayer.utils.Coordinate;
 
 enum PixelState {
     vertical,
@@ -53,9 +55,9 @@ public class GameMapPixel {
     static private Coordinate[] horizontalCoors = new Coordinate[3];
     static private Coordinate[] verticalCoors = new Coordinate[3];
 
-    static private boolean validPosition(Character symbol, ArrayList<ArrayList<Character>> map, Coordinate[] coors) {
-        for (Coordinate coor : coors) {
-            if (map.get(coor.y).get(coor.x) != symbol) {
+    static private boolean validPosition(Character symbol, ArrayList<ArrayList<Character>> map, Coordinate[] coordinates) {
+        for (Coordinate coordinate : coordinates) {
+            if (map.get(coordinate.y).get(coordinate.x) != symbol) {
                 return false;
             }
         }
@@ -119,9 +121,9 @@ public class GameMapPixel {
         return new GameMapPixel(symbol, state);
     }
 
-    public static void updateMap(ArrayList<ArrayList<Character>> newMasterMap, Coordinate coordinate, Character symbol) {
-        var initX = coordinate.x * 3;
-        var initY = coordinate.y * 3;
+    public static void updateMap(ArrayList<ArrayList<Character>> newMasterMap, Coordinate coordinatedinate, Character symbol) {
+        var initX = coordinatedinate.x * 3;
+        var initY = coordinatedinate.y * 3;
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -130,9 +132,9 @@ public class GameMapPixel {
         }
     }
 
-    public static GameMapPixel getPixel(ArrayList<ArrayList<Character>> newMasterMap, Coordinate coordinate) {
-        var initX = coordinate.x * 3;
-        var initY = coordinate.y * 3;
+    public static GameMapPixel getPixel(ArrayList<ArrayList<Character>> newMasterMap, Coordinate coordinatedinate) {
+        var initX = coordinatedinate.x * 3;
+        var initY = coordinatedinate.y * 3;
 
         GameMapPixel pixel = null;
         ArrayList<ArrayList<Character>> characters = new ArrayList<>();
@@ -154,9 +156,9 @@ public class GameMapPixel {
         return GameMapPixel.fromRawMap(characters);
     }
 
-    public static void updateMap(ArrayList<ArrayList<Character>> newMasterMap, Coordinate coordinate, GameMapPixel pixel) {
-        var initX = coordinate.x * 3;
-        var initY = coordinate.y * 3;
+    public static void updateMap(ArrayList<ArrayList<Character>> newMasterMap, Coordinate coordinatedinate, GameMapPixel pixel) {
+        var initX = coordinatedinate.x * 3;
+        var initY = coordinatedinate.y * 3;
 
         switch (pixel.state) {
             case full:

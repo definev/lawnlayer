@@ -7,17 +7,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import lawnlayer.App;
-import lawnlayer.gameObject.GameObject;
-import lawnlayer.gameObject.Grass;
-import lawnlayer.gameObject.Player;
-import lawnlayer.gameObject.Wall;
-import processing.core.PApplet;
+import lawnlayer.gameObject.BaseGameObject;
+import lawnlayer.gameObject.staticObj.Grass;
+import lawnlayer.gameObject.staticObj.Wall;
+import lawnlayer.utils.direction.EnemyMoveDirection;
+import lawnlayer.utils.direction.MoveDirection;
 
 public class GameUtils {
     public static final Integer MAP_HEIGHT = 32;
     public static final Integer MAP_WIDTH = 64;
 
-    public static ArrayList<GameObject> load(PApplet app, String path) throws IOException {
+    public static final int WIDTH = 1280;
+    public static final int HEIGHT = 720;
+    public static final int SPRITE_SIZE = 20;
+
+    public static final int FPS = 60;
+
+    public static ArrayList<BaseGameObject> load(App app, String path) throws IOException {
         var boards = new ArrayList<ArrayList<Character>>();
         File file = new File(path);
 
@@ -37,37 +43,37 @@ public class GameUtils {
             boards.add(board);
         }
 
-        var objects = new ArrayList<GameObject>();
+        var objects = new ArrayList<BaseGameObject>();
 
         for (Integer i = 0; i < boards.size(); i += 1) {
             for (Integer j = 0; j < boards.get(0).size(); j += 1) {
                 var character = boards.get(i).get(j);
                 if (character == Wall.symbol) {
                     Wall concrete = null;
-                    for (GameObject object : objects) {
+                    for (BaseGameObject object : objects) {
                         if (object instanceof Wall) {
                             concrete = (Wall) object;
-                            object.addCoor(new Coordinate(j, i));
+                            object.addCoordinate(new Coordinate(j, i));
                             break;
                         }
                     }
                     if (concrete != null) continue;
                     concrete = new Wall(app);
-                    concrete.addCoor(new Coordinate(j, i));
+                    concrete.addCoordinate(new Coordinate(j, i));
                     objects.add(concrete);
                 }
                 if (character == Grass.symbol) {
                     Grass concrete = null;
-                    for (GameObject object : objects) {
+                    for (BaseGameObject object : objects) {
                         if (object instanceof Grass) {
                             concrete = (Grass) object;
-                            object.addCoor(new Coordinate(j, i));
+                            object.addCoordinate(new Coordinate(j, i));
                             break;
                         }
                     }
                     if (concrete != null) continue;
                     concrete = new Grass(app);
-                    concrete.addCoor(new Coordinate(j, i));
+                    concrete.addCoordinate(new Coordinate(j, i));
                     objects.add(concrete);
                 }
             }
@@ -76,8 +82,8 @@ public class GameUtils {
         return objects;
     }
 
-    public static Coordinate transformCoor(Coordinate coor) {
-        return new Coordinate(coor.x * App.SPRITE_SIZE, coor.y * App.SPRITE_SIZE + 80);
+    public static Coordinate transformCoor(Coordinate coordinate) {
+        return new Coordinate(coordinate.x * GameUtils.SPRITE_SIZE, coordinate.y * GameUtils.SPRITE_SIZE + 80);
     }
 
     public static MoveDirection getDirection(MoveDirection lastMovedirection, Coordinate before, Coordinate after) {

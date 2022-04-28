@@ -3,6 +3,8 @@ package lawnlayer.utils;
 
 import java.util.Objects;
 
+import lawnlayer.utils.direction.MoveDirection;
+
 public class Coordinate {
     public final Integer x;
     public final Integer y;
@@ -30,12 +32,12 @@ public class Coordinate {
     }
 
     public Coordinate move(MoveDirection direction, Integer times) {
-        Coordinate coordinate = this;
+        Coordinate coordinatedinate = this;
         for (int i = 0; i < times; i++) {
-            coordinate = coordinate.move(direction);
+            coordinatedinate = coordinatedinate.move(direction);
         }
 
-        return coordinate;
+        return coordinatedinate;
     }
 
     public Boolean isOutOfBounds() {

@@ -1,13 +1,16 @@
-package lawnlayer.gameObject;
+package lawnlayer.gameObject.enemy;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 import lawnlayer.App;
+import lawnlayer.gameObject.BaseGameObject;
+import lawnlayer.gameObject.staticObj.Grass;
+import lawnlayer.gameObject.staticObj.Wall;
 import lawnlayer.utils.Coordinate;
-import lawnlayer.utils.EnemyMoveDirection;
+import lawnlayer.utils.direction.EnemyMoveDirection;
 import lawnlayer.utils.GameUtils;
-import lawnlayer.utils.MoveDirection;
+import lawnlayer.utils.direction.MoveDirection;
 
 public class WormEnemy extends BaseGameObject {
     public WormEnemy(App app) {
@@ -41,29 +44,29 @@ public class WormEnemy extends BaseGameObject {
 
     @Override
     protected void initCoordinate() {
-        coordinates.add((app).masterMap.randomizeLocation());
+        coordinatedinates.add((app).masterMap.randomizeLocation());
         moveDirection = EnemyMoveDirection.values()[new Random().nextInt(EnemyMoveDirection.values().length)];
     }
 
     @Override
-    void onCollision(BaseGameObject object, ArrayList<Coordinate> points) {
+    protected void onCollision(BaseGameObject object, ArrayList<Coordinate> points) {
         var point = points.get(0);
         if (object.className == "Wall" || object.className == "Grass") {
-            var last = coordinates.get(0);
+            var last = coordinatedinates.get(0);
 
-            coordinates = new ArrayList<>();
+            coordinatedinates = new ArrayList<>();
             switch (moveDirection) {
                 case topLeft:
-                    coordinates.add(new Coordinate(last.x + 1, last.y + 1));
+                    coordinatedinates.add(new Coordinate(last.x + 1, last.y + 1));
                     break;
                 case topRight:
-                    coordinates.add(new Coordinate(last.x - 1, last.y + 1));
+                    coordinatedinates.add(new Coordinate(last.x - 1, last.y + 1));
                     break;
                 case bottomRight:
-                    coordinates.add(new Coordinate(last.x - 1, last.y - 1));
+                    coordinatedinates.add(new Coordinate(last.x - 1, last.y - 1));
                     break;
                 case bottomLeft:
-                    coordinates.add(new Coordinate(last.x + 1, last.y - 1));
+                    coordinatedinates.add(new Coordinate(last.x + 1, last.y - 1));
                     break;
             }
 
@@ -150,8 +153,8 @@ public class WormEnemy extends BaseGameObject {
 
     @Override
     protected void drawCoordinates() {
-        for (Coordinate coor : coordinates) {
-            var transformedCoor = GameUtils.transformCoor(coor);
+        for (Coordinate coordinate : coordinatedinates) {
+            var transformedCoor = GameUtils.transformCoor(coordinate);
             app.image(App.worm, transformedCoor.x, transformedCoor.y, 20, 20);
         }
     }
@@ -166,20 +169,20 @@ public class WormEnemy extends BaseGameObject {
 
     private void onWormMove() {
         if (canUpdate()) {
-            var last = coordinates.get(0);
-            coordinates = new ArrayList<>();
+            var last = coordinatedinates.get(0);
+            coordinatedinates = new ArrayList<>();
             switch (moveDirection) {
                 case topLeft:
-                    coordinates.add(new Coordinate(last.x - 1, last.y - 1));
+                    coordinatedinates.add(new Coordinate(last.x - 1, last.y - 1));
                     break;
                 case topRight:
-                    coordinates.add(new Coordinate(last.x + 1, last.y - 1));
+                    coordinatedinates.add(new Coordinate(last.x + 1, last.y - 1));
                     break;
                 case bottomRight:
-                    coordinates.add(new Coordinate(last.x + 1, last.y + 1));
+                    coordinatedinates.add(new Coordinate(last.x + 1, last.y + 1));
                     break;
                 case bottomLeft:
-                    coordinates.add(new Coordinate(last.x - 1, last.y + 1));
+                    coordinatedinates.add(new Coordinate(last.x - 1, last.y + 1));
                     break;
             }
         }

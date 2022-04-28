@@ -2,20 +2,20 @@ package lawnlayer.gameObject;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import lawnlayer.App;
-import lawnlayer.utils.GameMap;
+import lawnlayer.gameObject.staticObj.Grass;
+import lawnlayer.utils.gameMap.GameMap;
 import lawnlayer.utils.GameUtils;
 import lawnlayer.utils.Coordinate;
-import lawnlayer.utils.MoveDirection;
+import lawnlayer.utils.direction.MoveDirection;
 
-public class Player extends GameObject {
+public class Player extends BaseGameObject {
     public static final Character symbol = 'G';
 
     public Player(App app) {
         super(app, "Player");
-        needToCheckCollision = true;
+        checkCollision = true;
     }
 
     static final Integer REFRESH_FRAME = 5;
@@ -29,14 +29,14 @@ public class Player extends GameObject {
     Boolean isDead = false;
 
     Boolean isInSafeZone() {
-        var lawnlayer = (App) app;
+        var lawnlayer = app;
         var inSafeZone = false;
-        for (GameObject object : lawnlayer.objects) {
-            if (object.debugName == "Wall" || object.debugName == "Grass") {
-                ArrayList<Coordinate> coorsCommon = new ArrayList(coors);
-                coorsCommon.retainAll(object.coors);
+        for (BaseGameObject object : lawnlayer.objects) {
+            if (object.className == "Wall" || object.className == "Grass") {
+                ArrayList<Coordinate> coordinatesCommon = new ArrayList(coordinatedinates);
+                coordinatesCommon.retainAll(object.coordinatedinates);
 
-                if (!coorsCommon.isEmpty() && coors.size() == 1) {
+                if (!coordinatesCommon.isEmpty() && coordinatedinates.size() == 1) {
                     inSafeZone = true;
                     break;
                 }
@@ -55,9 +55,9 @@ public class Player extends GameObject {
 
     private void markRelive() {
         isDead = false;
-        coors = new ArrayList();
-        initCoor();
-        ((App) app).lives -= 1;
+        coordinatedinates = new ArrayList();
+        initCoordinate();
+        (app).lives -= 1;
     }
 
     /// FRAME COUNTING
@@ -97,7 +97,7 @@ public class Player extends GameObject {
     private void onMovingUpdate() {
         var canRefresh = frameCount % REFRESH_FRAME == REFRESH_FRAME - 1;
         if (direction != MoveDirection.none && canRefresh) {
-            var last = coors.get(coors.size() - 1);
+            var last = coordinatedinates.get(coordinatedinates.size() - 1);
             var newDirection = last.move(direction);
 
             if (newDirection.isOutOfBounds()) {
@@ -105,16 +105,16 @@ public class Player extends GameObject {
                 return;
             }
 
-            if (coors.contains(newDirection)) {
+            if (coordinatedinates.contains(newDirection)) {
                 markDied();
                 return;
             }
 
             if (isInSafeZone()) {
-                coors = new ArrayList<>();
+                coordinatedinates = new ArrayList<>();
             }
 
-            coors.add(newDirection);
+            coordinatedinates.add(newDirection);
         }
     }
 
@@ -123,10 +123,10 @@ public class Player extends GameObject {
             redFlags = new ArrayList<>();
         }
 
-        boolean canUpdate = frameCount % 3 == 2 && coors.size() > MIN_SIZE_FOR_START_MARK_RED;
+        boolean canUpdate = frameCount % 3 == 2 && coordinatedinates.size() > MIN_SIZE_FOR_START_MARK_RED;
         if (canUpdate) {
             if (direction == MoveDirection.none) {
-                if (redFlags.size() >= coors.size() - 1) {
+                if (redFlags.size() >= coordinatedinates.size() - 1) {
                     markDied();
                 } else {
                     redFlags.add(redFlags.size());
@@ -137,7 +137,7 @@ public class Player extends GameObject {
 
     /// ON DEAD
     private void onDeadUpdate() {
-        if (redFlags.size() == coors.size()) {
+        if (redFlags.size() == coordinatedinates.size()) {
             markRelive();
             return;
         }
@@ -149,7 +149,7 @@ public class Player extends GameObject {
 
     /// FRAME COUNTING
     private void onFrameUpdate() {
-        var canRefresh = frameCount % App.FPS == App.FPS - 1;
+        var canRefresh = frameCount % GameUtils.FPS == GameUtils.FPS - 1;
         if (canRefresh) {
             frameCount = 0;
         } else {
@@ -159,12 +159,12 @@ public class Player extends GameObject {
 
 
     @Override
-    protected void initCoor() {
-        coors.add(new Coordinate(0, 0));
+    protected void initCoordinate() {
+        coordinatedinates.add(new Coordinate(0, 0));
     }
 
     @Override
-    protected void drawCoors() {
+    protected void drawCoordinates() {
         if (isDead.equals(false)) {
             onKeyboardUpdate();
             onMovingUpdate();
@@ -173,10 +173,10 @@ public class Player extends GameObject {
             onDeadUpdate();
         }
 
-        for (int i = 0; i < coors.size(); i += 1) {
-            var coor = coors.get(i);
-            var transformedCoor = GameUtils.transformCoor(coor);
-            if (i == coors.size() - 1) {
+        for (int i = 0; i < coordinatedinates.size(); i += 1) {
+            var coordinate = coordinatedinates.get(i);
+            var transformedCoor = GameUtils.transformCoor(coordinate);
+            if (i == coordinatedinates.size() - 1) {
                 app.image(App.ball, transformedCoor.x, transformedCoor.y, 20, 20);
             } else {
                 if (redFlags.contains(i)) {
@@ -196,18 +196,19 @@ public class Player extends GameObject {
     }
 
     @Override
-    void onCollision(GameObject object, ArrayList<Coordinate> points) {
+    protected void onCollision(BaseGameObject object, ArrayList<Coordinate> points) {
         super.onCollision(object, points);
-        if (object.debugName.equals("Ant")) {
+        if (isDead) return;
+        if (object.className.equals("AntEnemy")) {
             markDied();
         }
-        if (object.debugName.equals("Grass") || object.debugName.equals("Wall")) {
+        if (object.className.equals("Grass") || object.className.equals("Wall")) {
             if (isInSafeZone()) return;
-            if (coors.size() < 2) return;
-            GameMap cloneMap = ((App) app).masterMap.clone();
+            if (coordinatedinates.size() < 2) return;
+            GameMap cloneMap = (app).masterMap.clone();
 
-            var before = coors.get(coors.size() - 2);
-            var after = coors.get(coors.size() - 1);
+            var before = coordinatedinates.get(coordinatedinates.size() - 2);
+            var after = coordinatedinates.get(coordinatedinates.size() - 1);
             var lastDirection = GameUtils.getDirection(direction, before, after);
 
             GameMap transformMap = cloneMap.clone();
@@ -216,14 +217,14 @@ public class Player extends GameObject {
             GameMap newMap = transformMap;
 
             newMap.transform(Player.symbol, Grass.symbol);
-            coors = new ArrayList();
-            coors.add(after);
-            var queueObjects = newMap.parse((App) app);
+            coordinatedinates = new ArrayList();
+            coordinatedinates.add(after);
+            var queueObjects = newMap.parse(app);
             queueObjects.add(this);
-            ((App) app).queueObjects = queueObjects;
+            (app).queueObjects = queueObjects;
         }
 
-        if (object.debugName.equals("Worm") || object.debugName.equals("Beetle")) {
+        if (object.className.equals("WormEnemy") || object.className.equals("BeetleEnemy")) {
             markDied();
         }
     }

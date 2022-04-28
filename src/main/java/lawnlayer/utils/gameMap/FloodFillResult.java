@@ -1,4 +1,4 @@
-package lawnlayer.utils;
+package lawnlayer.utils.gameMap;
 
 import java.util.ArrayList;
 

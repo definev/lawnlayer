@@ -1,4 +1,4 @@
-package lawnlayer.utils;
+package lawnlayer.utils.gameMap;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -10,9 +10,13 @@ import lawnlayer.gameObject.enemy.BeetleEnermy;
 import lawnlayer.gameObject.powerup.SlowEnemyPowerUp;
 import lawnlayer.gameObject.enemy.WormEnemy;
 import lawnlayer.gameObject.BaseGameObject;
-import lawnlayer.gameObject.Grass;
+import lawnlayer.gameObject.staticObj.Grass;
 import lawnlayer.gameObject.Player;
-import lawnlayer.gameObject.Wall;
+import lawnlayer.gameObject.staticObj.Wall;
+import lawnlayer.utils.Coordinate;
+import lawnlayer.utils.GameUtils;
+import lawnlayer.utils.direction.EnemyMoveDirection;
+import lawnlayer.utils.direction.MoveDirection;
 
 public class GameMap {
     protected ArrayList<ArrayList<GameMapPixel>> masterMap = new ArrayList<>();
@@ -30,8 +34,8 @@ public class GameMap {
         load(path);
     }
 
-    public GameMapPixel get(Coordinate coordinate) {
-        return masterMap.get(coordinate.y).get(coordinate.x);
+    public GameMapPixel get(Coordinate coordinatedinate) {
+        return masterMap.get(coordinatedinate.y).get(coordinatedinate.x);
     }
 
     public Coordinate randomizeLocation() {
@@ -104,162 +108,162 @@ public class GameMap {
     public void fill(BaseGameObject object) {
         switch (object.className) {
             case "Player":
-                if (object.coordinates.size() == 1) {
-                    masterMap.get(object.coordinates.get(0).y).set(object.coordinates.get(0).x, new GameMapPixel(Player.symbol, PixelState.full));
+                if (object.coordinatedinates.size() == 1) {
+                    masterMap.get(object.coordinatedinates.get(0).y).set(object.coordinatedinates.get(0).x, new GameMapPixel(Player.symbol, PixelState.full));
                     return;
                 }
-                for (int i = 0; i < object.coordinates.size(); i++) {
-                    var coor = object.coordinates.get(i);
+                for (int i = 0; i < object.coordinatedinates.size(); i++) {
+                    var coordinate = object.coordinatedinates.get(i);
                     Coordinate prev = null;
                     Coordinate next = null;
-                    var map = masterMap.get(coor.y);
+                    var map = masterMap.get(coordinate.y);
 
                     if (i > 0) {
-                        prev = object.coordinates.get(i - 1);
+                        prev = object.coordinatedinates.get(i - 1);
                     }
-                    if (i < object.coordinates.size() - 1) {
-                        next = object.coordinates.get(i + 1);
+                    if (i < object.coordinatedinates.size() - 1) {
+                        next = object.coordinatedinates.get(i + 1);
                     }
 
                     if (i == 0) {
-                        prev = predictDirection(coor, GameUtils.getDirection(MoveDirection.left, coor, next));
+                        prev = predictDirection(coordinate, GameUtils.getDirection(MoveDirection.left, coordinate, next));
                     }
-                    if (i == object.coordinates.size() - 1) {
-                        next = predictDirection(coor, GameUtils.getDirection(MoveDirection.left, coor, prev));
+                    if (i == object.coordinatedinates.size() - 1) {
+                        next = predictDirection(coordinate, GameUtils.getDirection(MoveDirection.left, coordinate, prev));
                     }
 
-                    var prevDirection = GameUtils.getDirection(MoveDirection.left, prev, coor);
+                    var prevDirection = GameUtils.getDirection(MoveDirection.left, prev, coordinate);
                     if (next == null) {
                         if (prevDirection == MoveDirection.left) {
-                            map.set(coor.x, new GameMapPixel(Player.symbol, PixelState.full));
+                            map.set(coordinate.x, new GameMapPixel(Player.symbol, PixelState.full));
                         }
-                        masterMap.set(coor.y, map);
+                        masterMap.set(coordinate.y, map);
                         return;
                     }
-                    var nextDirection = GameUtils.getDirection(prevDirection, coor, next);
+                    var nextDirection = GameUtils.getDirection(prevDirection, coordinate, next);
 
                     if (prevDirection == MoveDirection.left && nextDirection == MoveDirection.up) {
-                        map.set(coor.x, new GameMapPixel(Player.symbol, PixelState.topRight));
+                        map.set(coordinate.x, new GameMapPixel(Player.symbol, PixelState.topRight));
                     }
                     if (prevDirection == MoveDirection.left && nextDirection == MoveDirection.down) {
-                        map.set(coor.x, new GameMapPixel(Player.symbol, PixelState.bottomRight));
+                        map.set(coordinate.x, new GameMapPixel(Player.symbol, PixelState.bottomRight));
                     }
                     if (prevDirection == MoveDirection.right && nextDirection == MoveDirection.up) {
-                        map.set(coor.x, new GameMapPixel(Player.symbol, PixelState.topLeft));
+                        map.set(coordinate.x, new GameMapPixel(Player.symbol, PixelState.topLeft));
                     }
                     if (prevDirection == MoveDirection.right && nextDirection == MoveDirection.down) {
-                        map.set(coor.x, new GameMapPixel(Player.symbol, PixelState.bottomLeft));
+                        map.set(coordinate.x, new GameMapPixel(Player.symbol, PixelState.bottomLeft));
                     }
                     if (prevDirection == MoveDirection.down && nextDirection == MoveDirection.left) {
-                        map.set(coor.x, new GameMapPixel(Player.symbol, PixelState.topLeft));
+                        map.set(coordinate.x, new GameMapPixel(Player.symbol, PixelState.topLeft));
                     }
                     if (prevDirection == MoveDirection.down && nextDirection == MoveDirection.right) {
-                        map.set(coor.x, new GameMapPixel(Player.symbol, PixelState.topRight));
+                        map.set(coordinate.x, new GameMapPixel(Player.symbol, PixelState.topRight));
                     }
                     if (prevDirection == MoveDirection.up && nextDirection == MoveDirection.left) {
-                        map.set(coor.x, new GameMapPixel(Player.symbol, PixelState.bottomLeft));
+                        map.set(coordinate.x, new GameMapPixel(Player.symbol, PixelState.bottomLeft));
                     }
                     if (prevDirection == MoveDirection.up && nextDirection == MoveDirection.right) {
-                        map.set(coor.x, new GameMapPixel(Player.symbol, PixelState.bottomRight));
+                        map.set(coordinate.x, new GameMapPixel(Player.symbol, PixelState.bottomRight));
                     }
                     if (prevDirection == MoveDirection.up && nextDirection == MoveDirection.up) {
-                        map.set(coor.x, new GameMapPixel(Player.symbol, PixelState.vertical));
+                        map.set(coordinate.x, new GameMapPixel(Player.symbol, PixelState.vertical));
                     }
                     if (prevDirection == MoveDirection.down && nextDirection == MoveDirection.down) {
-                        map.set(coor.x, new GameMapPixel(Player.symbol, PixelState.vertical));
+                        map.set(coordinate.x, new GameMapPixel(Player.symbol, PixelState.vertical));
                     }
                     if (prevDirection == MoveDirection.left && nextDirection == MoveDirection.left) {
-                        map.set(coor.x, new GameMapPixel(Player.symbol, PixelState.horizontal));
+                        map.set(coordinate.x, new GameMapPixel(Player.symbol, PixelState.horizontal));
                     }
                     if (prevDirection == MoveDirection.right && nextDirection == MoveDirection.right) {
-                        map.set(coor.x, new GameMapPixel(Player.symbol, PixelState.horizontal));
+                        map.set(coordinate.x, new GameMapPixel(Player.symbol, PixelState.horizontal));
                     }
 
-                    masterMap.set(coor.y, map);
+                    masterMap.set(coordinate.y, map);
                 }
                 break;
             case "WormEnemy":
-                for (Coordinate coor : object.coordinates) {
-                    var map = masterMap.get(coor.y);
+                for (Coordinate coordinate : object.coordinatedinates) {
+                    var map = masterMap.get(coordinate.y);
                     var worm = (WormEnemy) object;
 
                     switch (worm.moveDirection) {
                         case topLeft:
-                            map.set(coor.x, new GameMapPixel(WormEnemy.symbol, PixelState.topLeft));
+                            map.set(coordinate.x, new GameMapPixel(WormEnemy.symbol, PixelState.topLeft));
                             break;
                         case topRight:
-                            map.set(coor.x, new GameMapPixel(WormEnemy.symbol, PixelState.topRight));
+                            map.set(coordinate.x, new GameMapPixel(WormEnemy.symbol, PixelState.topRight));
                             break;
                         case bottomLeft:
-                            map.set(coor.x, new GameMapPixel(WormEnemy.symbol, PixelState.bottomLeft));
+                            map.set(coordinate.x, new GameMapPixel(WormEnemy.symbol, PixelState.bottomLeft));
                             break;
                         case bottomRight:
-                            map.set(coor.x, new GameMapPixel(WormEnemy.symbol, PixelState.bottomRight));
+                            map.set(coordinate.x, new GameMapPixel(WormEnemy.symbol, PixelState.bottomRight));
                             break;
                     }
                 }
                 break;
             case "BeetleEnemy":
-                for (Coordinate coor : object.coordinates) {
-                    var map = masterMap.get(coor.y);
+                for (Coordinate coordinate : object.coordinatedinates) {
+                    var map = masterMap.get(coordinate.y);
                     var beetle = (BeetleEnermy) object;
 
                     switch (beetle.moveDirection) {
                         case topLeft:
-                            map.set(coor.x, new GameMapPixel(BeetleEnermy.symbol, PixelState.topLeft));
+                            map.set(coordinate.x, new GameMapPixel(BeetleEnermy.symbol, PixelState.topLeft));
                             break;
                         case topRight:
-                            map.set(coor.x, new GameMapPixel(BeetleEnermy.symbol, PixelState.topRight));
+                            map.set(coordinate.x, new GameMapPixel(BeetleEnermy.symbol, PixelState.topRight));
                             break;
                         case bottomLeft:
-                            map.set(coor.x, new GameMapPixel(BeetleEnermy.symbol, PixelState.bottomLeft));
+                            map.set(coordinate.x, new GameMapPixel(BeetleEnermy.symbol, PixelState.bottomLeft));
                             break;
                         case bottomRight:
-                            map.set(coor.x, new GameMapPixel(BeetleEnermy.symbol, PixelState.bottomRight));
+                            map.set(coordinate.x, new GameMapPixel(BeetleEnermy.symbol, PixelState.bottomRight));
                             break;
                     }
                 }
                 break;
             case "Grass":
-                for (Coordinate coor : object.coordinates) {
-                    var map = masterMap.get(coor.y);
-                    map.set(coor.x, new GameMapPixel(Grass.symbol, PixelState.full));
-                    masterMap.set(coor.y, map);
+                for (Coordinate coordinate : object.coordinatedinates) {
+                    var map = masterMap.get(coordinate.y);
+                    map.set(coordinate.x, new GameMapPixel(Grass.symbol, PixelState.full));
+                    masterMap.set(coordinate.y, map);
                 }
                 break;
             case "Wall":
-                for (Coordinate coor : object.coordinates) {
-                    var map = masterMap.get(coor.y);
-                    map.set(coor.x, new GameMapPixel(Wall.symbol, PixelState.full));
-                    masterMap.set(coor.y, map);
+                for (Coordinate coordinate : object.coordinatedinates) {
+                    var map = masterMap.get(coordinate.y);
+                    map.set(coordinate.x, new GameMapPixel(Wall.symbol, PixelState.full));
+                    masterMap.set(coordinate.y, map);
                 }
                 break;
             case "AntEnemy":
-                for (Coordinate coor : object.coordinates) {
-                    var map = masterMap.get(coor.y);
+                for (Coordinate coordinate : object.coordinatedinates) {
+                    var map = masterMap.get(coordinate.y);
                     var ant = (AntEnemy) object;
                     switch (ant.direction) {
                         case up:
-                            map.set(coor.x, new GameMapPixel(AntEnemy.symbol, PixelState.topLeft));
+                            map.set(coordinate.x, new GameMapPixel(AntEnemy.symbol, PixelState.topLeft));
                             break;
                         case down:
-                            map.set(coor.x, new GameMapPixel(AntEnemy.symbol, PixelState.bottomLeft));
+                            map.set(coordinate.x, new GameMapPixel(AntEnemy.symbol, PixelState.bottomLeft));
                             break;
                         case left:
-                            map.set(coor.x, new GameMapPixel(AntEnemy.symbol, PixelState.topRight));
+                            map.set(coordinate.x, new GameMapPixel(AntEnemy.symbol, PixelState.topRight));
                             break;
                         case right:
-                            map.set(coor.x, new GameMapPixel(AntEnemy.symbol, PixelState.bottomRight));
+                            map.set(coordinate.x, new GameMapPixel(AntEnemy.symbol, PixelState.bottomRight));
                             break;
                     }
-                    masterMap.set(coor.y, map);
+                    masterMap.set(coordinate.y, map);
                 }
                 break;
             case "SlowEnemyPowerUp":
-                for (Coordinate coor : object.coordinates) {
-                    var map = masterMap.get(coor.y);
-                    map.set(coor.x, new GameMapPixel(SlowEnemyPowerUp.symbol, PixelState.full));
-                    masterMap.set(coor.y, map);
+                for (Coordinate coordinate : object.coordinatedinates) {
+                    var map = masterMap.get(coordinate.y);
+                    map.set(coordinate.x, new GameMapPixel(SlowEnemyPowerUp.symbol, PixelState.full));
+                    masterMap.set(coordinate.y, map);
                 }
                 break;
 
@@ -300,12 +304,12 @@ public class GameMap {
         return prev;
     }
 
-    public void relativeFloodFill(Coordinate coordinate, MoveDirection direction) {
+    public void relativeFloodFill(Coordinate coordinatedinate, MoveDirection direction) {
         var firstRawMap = getRawMap();
         var secondRawMap = getRawMap();
-        var absoluteCoordinate = new Coordinate(coordinate.x * 3, coordinate.y * 3);
+        var absoluteCoordinate = new Coordinate(coordinatedinate.x * 3, coordinatedinate.y * 3);
 
-        var pixel = masterMap.get(coordinate.y).get(coordinate.x);
+        var pixel = masterMap.get(coordinatedinate.y).get(coordinatedinate.x);
 
         Coordinate startFirstCoordinate = null;
         Coordinate startSecondCoordinate = null;
@@ -524,7 +528,7 @@ public class GameMap {
                             worm.moveDirection = EnemyMoveDirection.bottomRight;
                             break;
                     }
-                    worm.coordinates = new ArrayList<>();
+                    worm.coordinatedinates = new ArrayList<>();
                     worm.addCoordinate(new Coordinate(j, i));
                     enemies.add(worm);
                 }
@@ -544,7 +548,7 @@ public class GameMap {
                             beetle.moveDirection = EnemyMoveDirection.bottomRight;
                             break;
                     }
-                    beetle.coordinates = new ArrayList<>();
+                    beetle.coordinatedinates = new ArrayList<>();
                     beetle.addCoordinate(new Coordinate(j, i));
                     enemies.add(beetle);
                 }
@@ -568,13 +572,13 @@ public class GameMap {
                             ant.direction = MoveDirection.right;
                             break;
                     }
-                    ant.coordinates = new ArrayList<>();
+                    ant.coordinatedinates = new ArrayList<>();
                     ant.addCoordinate(new Coordinate(j, i));
                     enemies.add(ant);
                 }
                 if (character.symbol == SlowEnemyPowerUp.symbol) {
                     var powerUp = new SlowEnemyPowerUp(app);
-                    powerUp.coordinates = new ArrayList<>();
+                    powerUp.coordinatedinates = new ArrayList<>();
                     powerUp.addCoordinate(new Coordinate(j, i));
                     powerUps.add(powerUp);
                 }

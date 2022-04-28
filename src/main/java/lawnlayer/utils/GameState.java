@@ -1,4 +1,4 @@
-package lawnlayer;
+package lawnlayer.utils;
 
 public enum GameState {
     playing,

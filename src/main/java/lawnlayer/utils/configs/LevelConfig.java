@@ -1,17 +1,12 @@
-package lawnlayer.utils;
+package lawnlayer.utils.configs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-import org.checkerframework.checker.units.qual.A;
-
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
-
-import processing.data.JSONObject;
 
 public class LevelConfig {
     public LevelConfig(String outlay, ArrayList<EnemyConfig> enemies, Integer lives) {

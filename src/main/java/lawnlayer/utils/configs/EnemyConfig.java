@@ -1,4 +1,4 @@
-package lawnlayer.utils;
+package lawnlayer.utils.configs;
 
 public class EnemyConfig {
     public EnemyConfig(Integer type, String spawn) {

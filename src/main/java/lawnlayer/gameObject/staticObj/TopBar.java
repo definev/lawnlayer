@@ -1,7 +1,6 @@
-package lawnlayer.gameObject;
+package lawnlayer.gameObject.staticObj;
 
 import lawnlayer.App;
-import processing.core.PApplet;
 import processing.core.PFont;
 
 public class TopBar {

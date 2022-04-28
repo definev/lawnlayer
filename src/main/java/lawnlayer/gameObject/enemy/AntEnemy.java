@@ -1,9 +1,10 @@
-package lawnlayer.gameObject;
+package lawnlayer.gameObject.enemy;
 
 import lawnlayer.App;
+import lawnlayer.gameObject.BaseGameObject;
 import lawnlayer.utils.Coordinate;
 import lawnlayer.utils.GameUtils;
-import lawnlayer.utils.MoveDirection;
+import lawnlayer.utils.direction.MoveDirection;
 
 public class AntEnemy extends BaseGameObject {
 
@@ -38,14 +39,14 @@ public class AntEnemy extends BaseGameObject {
 
     @Override
     protected void initCoordinate() {
-        coordinates.add(new Coordinate(31, 31));
+        coordinatedinates.add(new Coordinate(31, 31));
     }
 
     @Override
     protected void drawCoordinates() {
-        for (Coordinate coor : coordinates) {
-            var transformedCoor = GameUtils.transformCoor(coor);
-            app.color(12, 213, 221, 1);
+        for (Coordinate coordinate : coordinatedinates) {
+            var transformedCoor = GameUtils.transformCoor(coordinate);
+            app.fill(32, 102, 21);
             app.rect(transformedCoor.x, transformedCoor.y, 20, 20);
         }
     }
@@ -59,23 +60,23 @@ public class AntEnemy extends BaseGameObject {
     }
 
     private void onAntMove() {
-        var coor = coordinates.get(0);
-        if (coor.x == 0 && coor.y == GameUtils.MAP_HEIGHT - 1) {
+        var coordinate = coordinatedinates.get(0);
+        if (coordinate.x == 0 && coordinate.y == GameUtils.MAP_HEIGHT - 1) {
             direction = MoveDirection.right;
         }
-        if (coor.x == GameUtils.MAP_WIDTH - 1 && coor.y == 0) {
+        if (coordinate.x == GameUtils.MAP_WIDTH - 1 && coordinate.y == 0) {
             direction = MoveDirection.left;
         }
-        if (coor.x == 0 && coor.y == 0) {
+        if (coordinate.x == 0 && coordinate.y == 0) {
             direction = MoveDirection.down;
         }
-        if (coor.x == GameUtils.MAP_WIDTH - 1 && coor.y == GameUtils.MAP_HEIGHT - 1) {
+        if (coordinate.x == GameUtils.MAP_WIDTH - 1 && coordinate.y == GameUtils.MAP_HEIGHT - 1) {
             direction = MoveDirection.up;
         }
 
         if (canUpdate()) {
-            coordinates.remove(0);
-            coordinates.add(coor.move(direction));
+            coordinatedinates.remove(0);
+            coordinatedinates.add(coordinate.move(direction));
         }
     }
 }

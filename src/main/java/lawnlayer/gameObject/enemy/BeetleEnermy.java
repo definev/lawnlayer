@@ -1,8 +1,9 @@
-package lawnlayer.gameObject;
+package lawnlayer.gameObject.enemy;
 
 import java.util.ArrayList;
 
 import lawnlayer.App;
+import lawnlayer.gameObject.BaseGameObject;
 import lawnlayer.utils.Coordinate;
 import lawnlayer.utils.GameUtils;
 
@@ -16,18 +17,18 @@ public class BeetleEnermy extends WormEnemy {
 
     @Override
     protected void drawCoordinates() {
-        for (Coordinate coor : coordinates) {
-            var transformedCoor = GameUtils.transformCoor(coor);
+        for (Coordinate coordinate : coordinatedinates) {
+            var transformedCoor = GameUtils.transformCoor(coordinate);
             app.image(App.beetle, transformedCoor.x, transformedCoor.y, 20, 20);
         }
     }
 
     @Override
-    void onCollision(BaseGameObject object, ArrayList<Coordinate> points) {
+    protected void onCollision(BaseGameObject object, ArrayList<Coordinate> points) {
         super.onCollision(object, points);
 
         if (object.className.equals("Grass")) {
-            object.coordinates.removeAll(points);
+            object.coordinatedinates.removeAll(points);
         }
     }
 }
