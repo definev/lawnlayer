@@ -1,17 +1,15 @@
 package lawnlayer.utils;
 
-import java.nio.charset.CoderResult;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Random;
 import java.util.Vector;
 
 import lawnlayer.App;
-import lawnlayer.gameObject.Ant;
-import lawnlayer.gameObject.Beetle;
-import lawnlayer.gameObject.Worm;
-import lawnlayer.gameObject.GameObject;
+import lawnlayer.gameObject.enemy.AntEnemy;
+import lawnlayer.gameObject.enemy.BeetleEnermy;
+import lawnlayer.gameObject.powerup.SlowEnemyPowerUp;
+import lawnlayer.gameObject.enemy.WormEnemy;
+import lawnlayer.gameObject.BaseGameObject;
 import lawnlayer.gameObject.Grass;
 import lawnlayer.gameObject.Player;
 import lawnlayer.gameObject.Wall;
@@ -103,30 +101,30 @@ public class GameMap {
         return newMap;
     }
 
-    public void fill(GameObject object) {
-        switch (object.debugName) {
+    public void fill(BaseGameObject object) {
+        switch (object.className) {
             case "Player":
-                if (object.coors.size() == 1) {
-                    masterMap.get(object.coors.get(0).y).set(object.coors.get(0).x, new GameMapPixel(Player.symbol, PixelState.full));
+                if (object.coordinates.size() == 1) {
+                    masterMap.get(object.coordinates.get(0).y).set(object.coordinates.get(0).x, new GameMapPixel(Player.symbol, PixelState.full));
                     return;
                 }
-                for (int i = 0; i < object.coors.size(); i++) {
-                    var coor = object.coors.get(i);
+                for (int i = 0; i < object.coordinates.size(); i++) {
+                    var coor = object.coordinates.get(i);
                     Coordinate prev = null;
                     Coordinate next = null;
                     var map = masterMap.get(coor.y);
 
                     if (i > 0) {
-                        prev = object.coors.get(i - 1);
+                        prev = object.coordinates.get(i - 1);
                     }
-                    if (i < object.coors.size() - 1) {
-                        next = object.coors.get(i + 1);
+                    if (i < object.coordinates.size() - 1) {
+                        next = object.coordinates.get(i + 1);
                     }
 
                     if (i == 0) {
                         prev = predictDirection(coor, GameUtils.getDirection(MoveDirection.left, coor, next));
                     }
-                    if (i == object.coors.size() - 1) {
+                    if (i == object.coordinates.size() - 1) {
                         next = predictDirection(coor, GameUtils.getDirection(MoveDirection.left, coor, prev));
                     }
 
@@ -180,83 +178,91 @@ public class GameMap {
                     masterMap.set(coor.y, map);
                 }
                 break;
-            case "Worm":
-                for (Coordinate coor : object.coors) {
+            case "WormEnemy":
+                for (Coordinate coor : object.coordinates) {
                     var map = masterMap.get(coor.y);
-                    var worm = (Worm) object;
+                    var worm = (WormEnemy) object;
 
                     switch (worm.moveDirection) {
                         case topLeft:
-                            map.set(coor.x, new GameMapPixel(Worm.symbol, PixelState.topLeft));
+                            map.set(coor.x, new GameMapPixel(WormEnemy.symbol, PixelState.topLeft));
                             break;
                         case topRight:
-                            map.set(coor.x, new GameMapPixel(Worm.symbol, PixelState.topRight));
+                            map.set(coor.x, new GameMapPixel(WormEnemy.symbol, PixelState.topRight));
                             break;
                         case bottomLeft:
-                            map.set(coor.x, new GameMapPixel(Worm.symbol, PixelState.bottomLeft));
+                            map.set(coor.x, new GameMapPixel(WormEnemy.symbol, PixelState.bottomLeft));
                             break;
                         case bottomRight:
-                            map.set(coor.x, new GameMapPixel(Worm.symbol, PixelState.bottomRight));
+                            map.set(coor.x, new GameMapPixel(WormEnemy.symbol, PixelState.bottomRight));
                             break;
                     }
                 }
                 break;
-            case "Beetle":
-                for (Coordinate coor : object.coors) {
+            case "BeetleEnemy":
+                for (Coordinate coor : object.coordinates) {
                     var map = masterMap.get(coor.y);
-                    var beetle = (Beetle) object;
+                    var beetle = (BeetleEnermy) object;
 
                     switch (beetle.moveDirection) {
                         case topLeft:
-                            map.set(coor.x, new GameMapPixel(Beetle.symbol, PixelState.topLeft));
+                            map.set(coor.x, new GameMapPixel(BeetleEnermy.symbol, PixelState.topLeft));
                             break;
                         case topRight:
-                            map.set(coor.x, new GameMapPixel(Beetle.symbol, PixelState.topRight));
+                            map.set(coor.x, new GameMapPixel(BeetleEnermy.symbol, PixelState.topRight));
                             break;
                         case bottomLeft:
-                            map.set(coor.x, new GameMapPixel(Beetle.symbol, PixelState.bottomLeft));
+                            map.set(coor.x, new GameMapPixel(BeetleEnermy.symbol, PixelState.bottomLeft));
                             break;
                         case bottomRight:
-                            map.set(coor.x, new GameMapPixel(Beetle.symbol, PixelState.bottomRight));
+                            map.set(coor.x, new GameMapPixel(BeetleEnermy.symbol, PixelState.bottomRight));
                             break;
                     }
                 }
                 break;
             case "Grass":
-                for (Coordinate coor : object.coors) {
+                for (Coordinate coor : object.coordinates) {
                     var map = masterMap.get(coor.y);
                     map.set(coor.x, new GameMapPixel(Grass.symbol, PixelState.full));
                     masterMap.set(coor.y, map);
                 }
                 break;
             case "Wall":
-                for (Coordinate coor : object.coors) {
+                for (Coordinate coor : object.coordinates) {
                     var map = masterMap.get(coor.y);
                     map.set(coor.x, new GameMapPixel(Wall.symbol, PixelState.full));
                     masterMap.set(coor.y, map);
                 }
                 break;
-            case "Ant":
-                for (Coordinate coor : object.coors) {
+            case "AntEnemy":
+                for (Coordinate coor : object.coordinates) {
                     var map = masterMap.get(coor.y);
-                    var ant = (Ant) object;
+                    var ant = (AntEnemy) object;
                     switch (ant.direction) {
                         case up:
-                            map.set(coor.x, new GameMapPixel(Ant.symbol, PixelState.topLeft));
+                            map.set(coor.x, new GameMapPixel(AntEnemy.symbol, PixelState.topLeft));
                             break;
                         case down:
-                            map.set(coor.x, new GameMapPixel(Ant.symbol, PixelState.bottomLeft));
+                            map.set(coor.x, new GameMapPixel(AntEnemy.symbol, PixelState.bottomLeft));
                             break;
                         case left:
-                            map.set(coor.x, new GameMapPixel(Ant.symbol, PixelState.topRight));
+                            map.set(coor.x, new GameMapPixel(AntEnemy.symbol, PixelState.topRight));
                             break;
                         case right:
-                            map.set(coor.x, new GameMapPixel(Ant.symbol, PixelState.bottomRight));
+                            map.set(coor.x, new GameMapPixel(AntEnemy.symbol, PixelState.bottomRight));
                             break;
                     }
                     masterMap.set(coor.y, map);
                 }
                 break;
+            case "SlowEnemyPowerUp":
+                for (Coordinate coor : object.coordinates) {
+                    var map = masterMap.get(coor.y);
+                    map.set(coor.x, new GameMapPixel(SlowEnemyPowerUp.symbol, PixelState.full));
+                    masterMap.set(coor.y, map);
+                }
+                break;
+
         }
     }
 
@@ -336,8 +342,8 @@ public class GameMap {
                 
         }
 
-        var firstResult = loopFloodFill(firstRawMap, startFirstCoordinate.x, startFirstCoordinate.y);
-        var secondResult = loopFloodFill(secondRawMap, startSecondCoordinate.x, startSecondCoordinate.y);
+        var firstResult = floodFill(firstRawMap, startFirstCoordinate.x, startFirstCoordinate.y);
+        var secondResult = floodFill(secondRawMap, startSecondCoordinate.x, startSecondCoordinate.y);
 
 
         transformRawMap(firstRawMap, Player.symbol, Grass.symbol);
@@ -383,7 +389,7 @@ public class GameMap {
         return true;
     }
 
-    private FloodFillResult loopFloodFill(ArrayList<ArrayList<Character>> character, Integer x, Integer y) {
+    private FloodFillResult floodFill(ArrayList<ArrayList<Character>> character, Integer x, Integer y) {
         ArrayList<ArrayList<Character>> replicateCharacter = new ArrayList<>();
         for (int i = 0; i < character.size(); i++) {
             replicateCharacter.add(new ArrayList<>());
@@ -394,7 +400,7 @@ public class GameMap {
 
         Vector<Coordinate> queue = new Vector<>();
         queue.add(new Coordinate(x, y));
-        if (character.get(y).get(x) == Worm.symbol) {
+        if (character.get(y).get(x) == WormEnemy.symbol) {
             return new FloodFillResult(false, replicateCharacter);
         }
         character.get(y).set(x, Player.symbol);
@@ -403,28 +409,28 @@ public class GameMap {
             var last = queue.get(queue.size() - 1);
             queue.remove(queue.size() - 1);
             if (isValid(character, last.x - 1, last.y)) {
-                if (character.get(last.y).get(last.x - 1) == Worm.symbol || character.get(last.y).get(last.x - 1) == Beetle.symbol) {
+                if (character.get(last.y).get(last.x - 1) == WormEnemy.symbol || character.get(last.y).get(last.x - 1) == BeetleEnermy.symbol) {
                     return new FloodFillResult(false, replicateCharacter);
                 }
                 character.get(last.y).set(last.x - 1, Player.symbol);
                 queue.add(new Coordinate(last.x - 1, last.y));
             }
             if (isValid(character, last.x + 1, last.y)) {
-                if (character.get(last.y).get(last.x + 1) == Worm.symbol || character.get(last.y).get(last.x + 1) == Beetle.symbol) {
+                if (character.get(last.y).get(last.x + 1) == WormEnemy.symbol || character.get(last.y).get(last.x + 1) == BeetleEnermy.symbol) {
                     return new FloodFillResult(false, replicateCharacter);
                 }
                 character.get(last.y).set(last.x + 1, Player.symbol);
                 queue.add(new Coordinate(last.x + 1, last.y));
             }
             if (isValid(character, last.x, last.y - 1)) {
-                if (character.get(last.y - 1).get(last.x) == Worm.symbol || character.get(last.y - 1).get(last.x) == Beetle.symbol) {
+                if (character.get(last.y - 1).get(last.x) == WormEnemy.symbol || character.get(last.y - 1).get(last.x) == BeetleEnermy.symbol) {
                     return new FloodFillResult(false, replicateCharacter);
                 }
                 character.get(last.y - 1).set(last.x, Player.symbol);
                 queue.add(new Coordinate(last.x, last.y - 1));
             }
             if (isValid(character, last.x, last.y + 1)) {
-                if (character.get(last.y + 1).get(last.x) == Worm.symbol || character.get(last.y + 1).get(last.x) == Beetle.symbol) {
+                if (character.get(last.y + 1).get(last.x) == WormEnemy.symbol || character.get(last.y + 1).get(last.x) == BeetleEnermy.symbol) {
                     return new FloodFillResult(false, replicateCharacter);
                 }
                 character.get(last.y + 1).set(last.x, Player.symbol);
@@ -474,12 +480,13 @@ public class GameMap {
         }
     }
 
-    public ArrayList<GameObject> parse(App app) {
-        var objects = new ArrayList<GameObject>();
+    public ArrayList<BaseGameObject> parse(App app) {
+        var objects = new ArrayList<BaseGameObject>();
         Wall wall = null;
         Grass grass = null;
         Player player = null;
-        ArrayList<GameObject> enemies = new ArrayList<>();
+        ArrayList<BaseGameObject> enemies = new ArrayList<>();
+        ArrayList<BaseGameObject> powerUps = new ArrayList<>();
         for (int i = 0; i < masterMap.size(); i += 1) {
             for (int j = 0; j < masterMap.get(0).size(); j += 1) {
                 var character = masterMap.get(i).get(j);
@@ -487,22 +494,22 @@ public class GameMap {
                     if (player == null) {
                         player = new Player(app);
                     }
-                    player.addCoor(new Coordinate(j, i));
+                    player.addCoordinate(new Coordinate(j, i));
                 }
                 if (character.symbol == Grass.symbol) {
                     if (grass == null) {
                         grass = new Grass(app);
                     }
-                    grass.addCoor(new Coordinate(j, i));
+                    grass.addCoordinate(new Coordinate(j, i));
                 }
                 if (character.symbol == Wall.symbol) {
                     if (wall == null) {
                         wall = new Wall(app);
                     }
-                    wall.addCoor(new Coordinate(j, i));
+                    wall.addCoordinate(new Coordinate(j, i));
                 }
-                if (character.symbol == Worm.symbol) {
-                    var worm = new Worm(app);
+                if (character.symbol == WormEnemy.symbol) {
+                    var worm = new WormEnemy(app);
                     switch (character.state) {
                         case topLeft:
                             worm.moveDirection = EnemyMoveDirection.topLeft;
@@ -517,12 +524,12 @@ public class GameMap {
                             worm.moveDirection = EnemyMoveDirection.bottomRight;
                             break;
                     }
-                    worm.coors = new ArrayList<>();
-                    worm.addCoor(new Coordinate(j, i));
+                    worm.coordinates = new ArrayList<>();
+                    worm.addCoordinate(new Coordinate(j, i));
                     enemies.add(worm);
                 }
-                if (character.symbol == Beetle.symbol) {
-                    var beetle = new Beetle(app);
+                if (character.symbol == BeetleEnermy.symbol) {
+                    var beetle = new BeetleEnermy(app);
                     switch (character.state) {
                         case topLeft:
                             beetle.moveDirection = EnemyMoveDirection.topLeft;
@@ -537,16 +544,16 @@ public class GameMap {
                             beetle.moveDirection = EnemyMoveDirection.bottomRight;
                             break;
                     }
-                    beetle.coors = new ArrayList<>();
-                    beetle.addCoor(new Coordinate(j, i));
+                    beetle.coordinates = new ArrayList<>();
+                    beetle.addCoordinate(new Coordinate(j, i));
                     enemies.add(beetle);
                 }
-                if (character.symbol == Ant.symbol) {
+                if (character.symbol == AntEnemy.symbol) {
                     if (wall == null) {
                         wall = new Wall(app);
                     }
-                    wall.addCoor(new Coordinate(j, i));
-                    var ant = new Ant(app);
+                    wall.addCoordinate(new Coordinate(j, i));
+                    var ant = new AntEnemy(app);
                     switch (character.state) {
                         case topLeft:
                             ant.direction = MoveDirection.up;
@@ -561,9 +568,15 @@ public class GameMap {
                             ant.direction = MoveDirection.right;
                             break;
                     }
-                    ant.coors = new ArrayList<>();
-                    ant.addCoor(new Coordinate(j, i));
+                    ant.coordinates = new ArrayList<>();
+                    ant.addCoordinate(new Coordinate(j, i));
                     enemies.add(ant);
+                }
+                if (character.symbol == SlowEnemyPowerUp.symbol) {
+                    var powerUp = new SlowEnemyPowerUp(app);
+                    powerUp.coordinates = new ArrayList<>();
+                    powerUp.addCoordinate(new Coordinate(j, i));
+                    powerUps.add(powerUp);
                 }
             }
         }

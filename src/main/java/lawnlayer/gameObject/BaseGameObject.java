@@ -1,19 +1,20 @@
 package lawnlayer.gameObject;
 
 import java.util.ArrayList;
+import java.util.Timer;
 
 import lawnlayer.App;
 import lawnlayer.utils.Coordinate;
 import processing.core.PApplet;
 
 public abstract class GameObject {
-    GameObject(PApplet app, String debugName) {
+    GameObject(App app, String debugName) {
         this.app = app;
         this.debugName = debugName;
         initCoor();
     }
 
-    protected PApplet app;
+    protected App app;
 
     protected void initCoor() {}
 
@@ -23,7 +24,7 @@ public abstract class GameObject {
 
     protected void collisionCheck() {
         if (needToCheckCollision) {
-            for (GameObject object : ((App) app).objects) {
+            for (GameObject object : app.objects) {
                 var collisionPoints = collideAt(object);
                 if (!collisionPoints.isEmpty()) {
                     onCollision(object, collisionPoints);
@@ -56,4 +57,8 @@ public abstract class GameObject {
     }
 
     void onCollision(GameObject object, ArrayList<Coordinate> points) {}
+
+    void selfDestroy() {
+        app.deleteQueue.add(this);
+    }
 }

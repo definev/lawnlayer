@@ -8,12 +8,11 @@ import lawnlayer.utils.Coordinate;
 import lawnlayer.utils.EnemyMoveDirection;
 import lawnlayer.utils.GameUtils;
 import lawnlayer.utils.MoveDirection;
-import processing.core.PApplet;
 
-public class Worm extends GameObject {
-    public Worm(PApplet app) {
-        super(app, "Worm");
-        needToCheckCollision = true;
+public class WormEnemy extends BaseGameObject {
+    public WormEnemy(App app) {
+        super(app, "WormEnemy");
+        checkCollision = true;
     }
 
     public static final Character symbol = 'w';
@@ -21,17 +20,18 @@ public class Worm extends GameObject {
     public EnemyMoveDirection moveDirection = EnemyMoveDirection.topLeft;
     Integer frameCount = 0;
     Integer speed = 52;
-    public void setSpeed(Integer speed) {
-        this.speed = speed;
+    Integer slowdown = 0;
+    public void setSlowdown(Integer slowdown) {
+        this.slowdown = slowdown;
     }
 
     private boolean canUpdate() {
-        if (speed == 0) return false;
-        return frameCount % (App.FPS - speed) == 0;
+        if (speed - slowdown == 0) return false;
+        return frameCount % (GameUtils.FPS - (speed - slowdown)) == 0;
     }
 
     private void onFrameUpdate() {
-        var canRefresh = frameCount % App.FPS == App.FPS - 1;
+        var canRefresh = frameCount % GameUtils.FPS == GameUtils.FPS - 1;
         if (canRefresh) {
             frameCount = 0;
         } else {
@@ -40,37 +40,37 @@ public class Worm extends GameObject {
     }
 
     @Override
-    protected void initCoor() {
-        coors.add(((App) app).masterMap.randomizeLocation());
+    protected void initCoordinate() {
+        coordinates.add((app).masterMap.randomizeLocation());
         moveDirection = EnemyMoveDirection.values()[new Random().nextInt(EnemyMoveDirection.values().length)];
     }
 
     @Override
-    void onCollision(GameObject object, ArrayList<Coordinate> points) {
+    void onCollision(BaseGameObject object, ArrayList<Coordinate> points) {
         var point = points.get(0);
-        if (object.debugName == "Wall" || object.debugName == "Grass") {
-            var last = coors.get(0);
+        if (object.className == "Wall" || object.className == "Grass") {
+            var last = coordinates.get(0);
 
-            coors = new ArrayList<>();
+            coordinates = new ArrayList<>();
             switch (moveDirection) {
                 case topLeft:
-                    coors.add(new Coordinate(last.x + 1, last.y + 1));
+                    coordinates.add(new Coordinate(last.x + 1, last.y + 1));
                     break;
                 case topRight:
-                    coors.add(new Coordinate(last.x - 1, last.y + 1));
+                    coordinates.add(new Coordinate(last.x - 1, last.y + 1));
                     break;
                 case bottomRight:
-                    coors.add(new Coordinate(last.x - 1, last.y - 1));
+                    coordinates.add(new Coordinate(last.x - 1, last.y - 1));
                     break;
                 case bottomLeft:
-                    coors.add(new Coordinate(last.x + 1, last.y - 1));
+                    coordinates.add(new Coordinate(last.x + 1, last.y - 1));
                     break;
             }
 
             if (point.isEdge()) {
                 moveDirection = GameUtils.getOppositeMove(moveDirection);
             } else {
-                var game = (App) app;
+                var game = app;
 
                 var bottomValid = false;
                 var bottomLast = point.move(MoveDirection.down);
@@ -149,8 +149,8 @@ public class Worm extends GameObject {
     }
 
     @Override
-    protected void drawCoors() {
-        for (Coordinate coor : coors) {
+    protected void drawCoordinates() {
+        for (Coordinate coor : coordinates) {
             var transformedCoor = GameUtils.transformCoor(coor);
             app.image(App.worm, transformedCoor.x, transformedCoor.y, 20, 20);
         }
@@ -158,28 +158,28 @@ public class Worm extends GameObject {
 
     @Override
     public void draw() {
-        drawCoors();
+        drawCoordinates();
         onWormMove();
-        collisionCheck();
+        onCollisionCheck();
         onFrameUpdate();
     }
 
     private void onWormMove() {
         if (canUpdate()) {
-            var last = coors.get(0);
-            coors = new ArrayList<>();
+            var last = coordinates.get(0);
+            coordinates = new ArrayList<>();
             switch (moveDirection) {
                 case topLeft:
-                    coors.add(new Coordinate(last.x - 1, last.y - 1));
+                    coordinates.add(new Coordinate(last.x - 1, last.y - 1));
                     break;
                 case topRight:
-                    coors.add(new Coordinate(last.x + 1, last.y - 1));
+                    coordinates.add(new Coordinate(last.x + 1, last.y - 1));
                     break;
                 case bottomRight:
-                    coors.add(new Coordinate(last.x + 1, last.y + 1));
+                    coordinates.add(new Coordinate(last.x + 1, last.y + 1));
                     break;
                 case bottomLeft:
-                    coors.add(new Coordinate(last.x - 1, last.y + 1));
+                    coordinates.add(new Coordinate(last.x - 1, last.y + 1));
                     break;
             }
         }

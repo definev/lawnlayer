@@ -1,21 +1,19 @@
 package lawnlayer.gameObject;
 
 import lawnlayer.App;
-import lawnlayer.utils.GameMap;
 import lawnlayer.utils.GameUtils;
 import lawnlayer.utils.Coordinate;
-import processing.core.PApplet;
 
-public class Grass extends GameObject {
+public class Grass extends BaseGameObject {
     public static final Character symbol = 'g';
 
-    public Grass(PApplet app) {
+    public Grass(App app) {
         super(app, "Grass");
     }
 
     @Override
-    protected void drawCoors() {
-        for (Coordinate coor : coors) {
+    protected void drawCoordinates() {
+        for (Coordinate coor : coordinates) {
             var transformedCoor = GameUtils.transformCoor(coor);
             app.image(App.grass, transformedCoor.x, transformedCoor.y, 20, 20);
         }

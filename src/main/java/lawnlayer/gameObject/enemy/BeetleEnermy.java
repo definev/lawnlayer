@@ -1,36 +1,33 @@
 package lawnlayer.gameObject;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import lawnlayer.App;
 import lawnlayer.utils.Coordinate;
-import lawnlayer.utils.EnemyMoveDirection;
 import lawnlayer.utils.GameUtils;
-import processing.core.PApplet;
 
-public class Beetle extends Worm {
-    public Beetle(PApplet app) {
+public class BeetleEnermy extends WormEnemy {
+    public BeetleEnermy(App app) {
         super(app);
-        debugName = "Beetle";
+        className = "BeetleEnemy";
     }
 
     public static Character symbol = 'b';
 
     @Override
-    protected void drawCoors() {
-        for (Coordinate coor : coors) {
+    protected void drawCoordinates() {
+        for (Coordinate coor : coordinates) {
             var transformedCoor = GameUtils.transformCoor(coor);
             app.image(App.beetle, transformedCoor.x, transformedCoor.y, 20, 20);
         }
     }
 
     @Override
-    void onCollision(GameObject object, ArrayList<Coordinate> points) {
+    void onCollision(BaseGameObject object, ArrayList<Coordinate> points) {
         super.onCollision(object, points);
 
-        if (object.debugName.equals("Grass")) {
-            object.coors.removeAll(points);
+        if (object.className.equals("Grass")) {
+            object.coordinates.removeAll(points);
         }
     }
 }

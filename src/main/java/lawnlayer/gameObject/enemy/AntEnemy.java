@@ -4,12 +4,11 @@ import lawnlayer.App;
 import lawnlayer.utils.Coordinate;
 import lawnlayer.utils.GameUtils;
 import lawnlayer.utils.MoveDirection;
-import processing.core.PApplet;
 
-public class Ant extends GameObject {
+public class AntEnemy extends BaseGameObject {
 
-    public Ant(PApplet app) {
-        super(app, "Ant");
+    public AntEnemy(App app) {
+        super(app, "AntEnemy");
     }
 
     public static final Character symbol = 'a';
@@ -24,12 +23,12 @@ public class Ant extends GameObject {
     }
 
     private boolean canUpdate() {
-        if (speed + slowdown == 0) return false;
-        return frameCount % (App.FPS - (speed + slowdown)) == 0;
+        if (speed - slowdown == 0) return false;
+        return frameCount % (GameUtils.FPS - (speed - slowdown)) == 0;
     }
 
     private void onFrameUpdate() {
-        var canRefresh = frameCount % App.FPS == App.FPS - 1;
+        var canRefresh = frameCount % GameUtils.FPS == GameUtils.FPS - 1;
         if (canRefresh) {
             frameCount = 0;
         } else {
@@ -38,13 +37,13 @@ public class Ant extends GameObject {
     }
 
     @Override
-    protected void initCoor() {
-        coors.add(new Coordinate(31, 31));
+    protected void initCoordinate() {
+        coordinates.add(new Coordinate(31, 31));
     }
 
     @Override
-    protected void drawCoors() {
-        for (Coordinate coor : coors) {
+    protected void drawCoordinates() {
+        for (Coordinate coor : coordinates) {
             var transformedCoor = GameUtils.transformCoor(coor);
             app.color(12, 213, 221, 1);
             app.rect(transformedCoor.x, transformedCoor.y, 20, 20);
@@ -60,7 +59,7 @@ public class Ant extends GameObject {
     }
 
     private void onAntMove() {
-        var coor = coors.get(0);
+        var coor = coordinates.get(0);
         if (coor.x == 0 && coor.y == GameUtils.MAP_HEIGHT - 1) {
             direction = MoveDirection.right;
         }
@@ -75,8 +74,8 @@ public class Ant extends GameObject {
         }
 
         if (canUpdate()) {
-            coors.remove(0);
-            coors.add(coor.move(direction));
+            coordinates.remove(0);
+            coordinates.add(coor.move(direction));
         }
     }
 }
