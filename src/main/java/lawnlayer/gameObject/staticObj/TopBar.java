@@ -17,7 +17,7 @@ public class TopBar {
 
     public void draw() {
         String livesText = String.format("Live: %d", app.lives);
-        String percentText = String.format("%d%s / %s", app.masterMap.evaluatePercent(Grass.symbol), "%", "100%");
+        String percentText = String.format("%d%s / %d%", app.masterMap.evaluatePercent(Grass.symbol), "%", ((App) app).targetPercent);
         String levelText = String.format("Level: %d", app.currentLevel + 1);
 
         app.textFont(f);
