@@ -25,7 +25,7 @@ public abstract class BaseGameObject {
     protected void onCollisionCheck() {
         if (checkCollision) {
             for (BaseGameObject object : app.objects) {
-                var collisionPoints = collideAt(object);
+                ArrayList<Coordinate> collisionPoints = collideAt(object);
                 if (!collisionPoints.isEmpty()) {
                     onCollision(object, collisionPoints);
                 }
@@ -47,7 +47,7 @@ public abstract class BaseGameObject {
     protected Boolean checkCollision = false;
 
     public ArrayList<Coordinate> collideAt(BaseGameObject object) {
-        var points = new ArrayList<Coordinate>();
+        ArrayList<Coordinate> points = new ArrayList<Coordinate>();
         for (Coordinate coordinate : object.coordinatedinates) {
             if (coordinatedinates.contains(coordinate)) {
                 points.add(coordinate);

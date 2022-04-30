@@ -2,6 +2,7 @@ package lawnlayer.utils.configs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.FileNotFoundException;
@@ -17,16 +18,16 @@ public class LevelConfig {
 
     public static ArrayList<LevelConfig> getConfigs(String path) throws FileNotFoundException {
         ArrayList<LevelConfig> levelConfigs = new ArrayList<>();
-        var json = JsonParser.parseReader(new FileReader(path));
+        JsonElement json = JsonParser.parseReader(new FileReader(path));
 
-        var obj = json.getAsJsonObject();
-        var levels = (JsonArray) obj.get("levels");
+        JsonObject obj = json.getAsJsonObject();
+        JsonArray levels = (JsonArray) obj.get("levels");
         for (JsonElement level : levels) {
-            var jsn = level.getAsJsonObject();
+            JsonObject jsn = level.getAsJsonObject();
             ArrayList<EnemyConfig> enemies = new ArrayList<>();
-            var rawEnemies = jsn.get("enemies").getAsJsonArray();
+            JsonArray rawEnemies = jsn.get("enemies").getAsJsonArray();
             for (JsonElement rawWorm : rawEnemies) {
-                var jsn1 = rawWorm.getAsJsonObject();
+                JsonObject jsn1 = rawWorm.getAsJsonObject();
                 enemies.add(new EnemyConfig(jsn1.get("type").getAsInt(), jsn1.get("spawn").getAsString()));
             }
 

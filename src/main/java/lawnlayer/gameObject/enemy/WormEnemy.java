@@ -11,6 +11,7 @@ import lawnlayer.utils.Coordinate;
 import lawnlayer.utils.direction.EnemyMoveDirection;
 import lawnlayer.utils.GameUtils;
 import lawnlayer.utils.direction.MoveDirection;
+import lawnlayer.utils.gameMap.GameMapPixel;
 
 public class WormEnemy extends BaseGameObject {
     public WormEnemy(App app) {
@@ -34,7 +35,7 @@ public class WormEnemy extends BaseGameObject {
     }
 
     private void onFrameUpdate() {
-        var canRefresh = frameCount % GameUtils.FPS == GameUtils.FPS - 1;
+        boolean canRefresh = frameCount % GameUtils.FPS == GameUtils.FPS - 1;
         if (canRefresh) {
             frameCount = 0;
         } else {
@@ -50,9 +51,9 @@ public class WormEnemy extends BaseGameObject {
 
     @Override
     protected void onCollision(BaseGameObject object, ArrayList<Coordinate> points) {
-        var point = points.get(0);
+        Coordinate point = points.get(0);
         if (object.className == "Wall" || object.className == "Grass") {
-            var last = coordinatedinates.get(0);
+            Coordinate last = coordinatedinates.get(0);
 
             coordinatedinates = new ArrayList<>();
             switch (moveDirection) {
@@ -73,37 +74,37 @@ public class WormEnemy extends BaseGameObject {
             if (point.isEdge()) {
                 moveDirection = GameUtils.getOppositeMove(moveDirection);
             } else {
-                var game = app;
+                App game = app;
 
-                var bottomValid = false;
-                var bottomLast = point.move(MoveDirection.down);
-                var upValid = false;
-                var upLast = point.move(MoveDirection.up);
-                var leftValid = false;
-                var leftLast = point.move(MoveDirection.left);
-                var rightValid = false;
-                var rightLast = point.move(MoveDirection.right);
+                boolean bottomValid = false;
+                Coordinate bottomLast = point.move(MoveDirection.down);
+                boolean upValid = false;
+                Coordinate upLast = point.move(MoveDirection.up);
+                boolean leftValid = false;
+                Coordinate leftLast = point.move(MoveDirection.left);
+                boolean rightValid = false;
+                Coordinate rightLast = point.move(MoveDirection.right);
 
                 if (!bottomLast.isOutOfBounds()) {
-                    var pixel = game.masterMap.get(bottomLast);
+                    GameMapPixel pixel = game.masterMap.get(bottomLast);
                     if (pixel.symbol == Wall.symbol || pixel.symbol == Grass.symbol) {
                         bottomValid = true;
                     }
                 }
                 if (!upLast.isOutOfBounds()) {
-                    var pixel = game.masterMap.get(upLast);
+                    GameMapPixel pixel = game.masterMap.get(upLast);
                     if (pixel.symbol == Wall.symbol || pixel.symbol == Grass.symbol) {
                         upValid = true;
                     }
                 }
                 if (!leftLast.isOutOfBounds()) {
-                    var pixel = game.masterMap.get(leftLast);
+                    GameMapPixel pixel = game.masterMap.get(leftLast);
                     if (pixel.symbol == Wall.symbol || pixel.symbol == Grass.symbol) {
                         leftValid = true;
                     }
                 }
                 if (!rightLast.isOutOfBounds()) {
-                    var pixel = game.masterMap.get(rightLast);
+                    GameMapPixel pixel = game.masterMap.get(rightLast);
                     if (pixel.symbol == Wall.symbol || pixel.symbol == Grass.symbol) {
                         rightValid = true;
                     }
@@ -154,7 +155,7 @@ public class WormEnemy extends BaseGameObject {
     @Override
     protected void drawCoordinates() {
         for (Coordinate coordinate : coordinatedinates) {
-            var transformedCoor = GameUtils.transformCoor(coordinate);
+            Coordinate transformedCoor = GameUtils.transformCoor(coordinate);
             app.image(App.worm, transformedCoor.x, transformedCoor.y, 20, 20);
         }
     }
@@ -169,7 +170,7 @@ public class WormEnemy extends BaseGameObject {
 
     private void onWormMove() {
         if (canUpdate()) {
-            var last = coordinatedinates.get(0);
+            Coordinate last = coordinatedinates.get(0);
             coordinatedinates = new ArrayList<>();
             switch (moveDirection) {
                 case topLeft:

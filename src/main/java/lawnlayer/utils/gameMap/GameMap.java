@@ -39,7 +39,7 @@ public class GameMap {
     }
 
     public Coordinate randomizeLocation() {
-        var rand = new Random();
+        Random rand = new Random();
         ArrayList<Coordinate> emptyList = new ArrayList<>();
 
         for (int i = 0; i < masterMap.size(); i++) {
@@ -55,7 +55,7 @@ public class GameMap {
     public ArrayList<ArrayList<Character>> getRawMap() {
         ArrayList<ArrayList<Character>> maps = new ArrayList<>();
         for (int i = 0; i < GameUtils.MAP_HEIGHT * 3; i++) {
-            var line = new ArrayList<Character>();
+            ArrayList<Character> line = new ArrayList<Character>();
             for (int j = 0; j < GameUtils.MAP_WIDTH * 3; j++) {
                 line.add(' ');
             }
@@ -77,7 +77,7 @@ public class GameMap {
         for (int i = 0; i < GameUtils.MAP_HEIGHT; i++) {
             ArrayList<GameMapPixel> line = new ArrayList<>();
             for (int j = 0; j < GameUtils.MAP_WIDTH; j++) {
-                var pixel = GameMapPixel.getPixel(maps, new Coordinate(j, i));
+                GameMapPixel pixel = GameMapPixel.getPixel(maps, new Coordinate(j, i));
                 line.add(pixel);
             }
             masterMap.add(line);
@@ -90,12 +90,12 @@ public class GameMap {
     }
 
     public GameMap clone() {
-        var newMap = new GameMap();
-        var newMasterMap = new ArrayList<ArrayList<GameMapPixel>>();
+        GameMap newMap = new GameMap();
+        ArrayList<ArrayList<GameMapPixel>> newMasterMap = new ArrayList<ArrayList<GameMapPixel>>();
 
         for (int i = 0; i < masterMap.size(); i += 1) {
-            var characters = masterMap.get(i);
-            var line = new ArrayList<GameMapPixel>();
+            ArrayList<GameMapPixel> characters = masterMap.get(i);
+            ArrayList<GameMapPixel> line = new ArrayList<GameMapPixel>();
             line.addAll(characters);
             newMasterMap.add(line);
         }
@@ -113,10 +113,10 @@ public class GameMap {
                     return;
                 }
                 for (int i = 0; i < object.coordinatedinates.size(); i++) {
-                    var coordinate = object.coordinatedinates.get(i);
+                    Coordinate coordinate = object.coordinatedinates.get(i);
                     Coordinate prev = null;
                     Coordinate next = null;
-                    var map = masterMap.get(coordinate.y);
+                    ArrayList<GameMapPixel> map = masterMap.get(coordinate.y);
 
                     if (i > 0) {
                         prev = object.coordinatedinates.get(i - 1);
@@ -132,7 +132,7 @@ public class GameMap {
                         next = predictDirection(coordinate, GameUtils.getDirection(MoveDirection.left, coordinate, prev));
                     }
 
-                    var prevDirection = GameUtils.getDirection(MoveDirection.left, prev, coordinate);
+                    MoveDirection prevDirection = GameUtils.getDirection(MoveDirection.left, prev, coordinate);
                     if (next == null) {
                         if (prevDirection == MoveDirection.left) {
                             map.set(coordinate.x, new GameMapPixel(Player.symbol, PixelState.full));
@@ -140,7 +140,7 @@ public class GameMap {
                         masterMap.set(coordinate.y, map);
                         return;
                     }
-                    var nextDirection = GameUtils.getDirection(prevDirection, coordinate, next);
+                    MoveDirection nextDirection = GameUtils.getDirection(prevDirection, coordinate, next);
 
                     if (prevDirection == MoveDirection.left && nextDirection == MoveDirection.up) {
                         map.set(coordinate.x, new GameMapPixel(Player.symbol, PixelState.topRight));
@@ -184,8 +184,8 @@ public class GameMap {
                 break;
             case "WormEnemy":
                 for (Coordinate coordinate : object.coordinatedinates) {
-                    var map = masterMap.get(coordinate.y);
-                    var worm = (WormEnemy) object;
+                    ArrayList<GameMapPixel> map = masterMap.get(coordinate.y);
+                    WormEnemy worm = (WormEnemy) object;
 
                     switch (worm.moveDirection) {
                         case topLeft:
@@ -205,8 +205,8 @@ public class GameMap {
                 break;
             case "BeetleEnemy":
                 for (Coordinate coordinate : object.coordinatedinates) {
-                    var map = masterMap.get(coordinate.y);
-                    var beetle = (BeetleEnermy) object;
+                    ArrayList<GameMapPixel> map = masterMap.get(coordinate.y);
+                    BeetleEnermy beetle = (BeetleEnermy) object;
 
                     switch (beetle.moveDirection) {
                         case topLeft:
@@ -226,22 +226,22 @@ public class GameMap {
                 break;
             case "Grass":
                 for (Coordinate coordinate : object.coordinatedinates) {
-                    var map = masterMap.get(coordinate.y);
+                    ArrayList<GameMapPixel> map = masterMap.get(coordinate.y);
                     map.set(coordinate.x, new GameMapPixel(Grass.symbol, PixelState.full));
                     masterMap.set(coordinate.y, map);
                 }
                 break;
             case "Wall":
                 for (Coordinate coordinate : object.coordinatedinates) {
-                    var map = masterMap.get(coordinate.y);
+                    ArrayList<GameMapPixel> map = masterMap.get(coordinate.y);
                     map.set(coordinate.x, new GameMapPixel(Wall.symbol, PixelState.full));
                     masterMap.set(coordinate.y, map);
                 }
                 break;
             case "AntEnemy":
                 for (Coordinate coordinate : object.coordinatedinates) {
-                    var map = masterMap.get(coordinate.y);
-                    var ant = (AntEnemy) object;
+                    ArrayList<GameMapPixel> map = masterMap.get(coordinate.y);
+                    AntEnemy ant = (AntEnemy) object;
                     switch (ant.direction) {
                         case up:
                             map.set(coordinate.x, new GameMapPixel(AntEnemy.symbol, PixelState.topLeft));
@@ -261,7 +261,7 @@ public class GameMap {
                 break;
             case "SlowEnemyPowerUp":
                 for (Coordinate coordinate : object.coordinatedinates) {
-                    var map = masterMap.get(coordinate.y);
+                    ArrayList<GameMapPixel> map = masterMap.get(coordinate.y);
                     map.set(coordinate.x, new GameMapPixel(SlowEnemyPowerUp.symbol, PixelState.full));
                     masterMap.set(coordinate.y, map);
                 }
@@ -273,29 +273,29 @@ public class GameMap {
     private Coordinate predictDirection(Coordinate curr, MoveDirection avoidDirection) {
         Coordinate prev = null;
         if (avoidDirection != MoveDirection.left) {
-            var leftCoor = new Coordinate(curr.x - 1, curr.y);
-            var leftPixel = get(leftCoor);
+            Coordinate leftCoor = new Coordinate(curr.x - 1, curr.y);
+            GameMapPixel leftPixel = get(leftCoor);
             if (leftPixel.symbol == Wall.symbol || leftPixel.symbol == Grass.symbol) {
                 prev = leftCoor;
             }
         }
         if (avoidDirection != MoveDirection.right) {
-            var rightCoor = new Coordinate(curr.x + 1, curr.y);
-            var rightPixel = get(rightCoor);
+            Coordinate rightCoor = new Coordinate(curr.x + 1, curr.y);
+            GameMapPixel rightPixel = get(rightCoor);
             if (rightPixel.symbol == Wall.symbol || rightPixel.symbol == Grass.symbol) {
                 prev = rightCoor;
             }
         }
         if (avoidDirection != MoveDirection.up) {
-            var upCoor = new Coordinate(curr.x, curr.y - 1);
-            var upPixel = get(upCoor);
+            Coordinate upCoor = new Coordinate(curr.x, curr.y - 1);
+            GameMapPixel upPixel = get(upCoor);
             if (upPixel.symbol == Wall.symbol || upPixel.symbol == Grass.symbol) {
                 prev = upCoor;
             }
         }
         if (avoidDirection != MoveDirection.down) {
-            var downCoor = new Coordinate(curr.x, curr.y + 1);
-            var downPixel = get(downCoor);
+            Coordinate downCoor = new Coordinate(curr.x, curr.y + 1);
+            GameMapPixel downPixel = get(downCoor);
             if (downPixel.symbol == Wall.symbol || downPixel.symbol == Grass.symbol) {
                 prev = downCoor;
             }
@@ -305,11 +305,11 @@ public class GameMap {
     }
 
     public void relativeFloodFill(Coordinate coordinatedinate, MoveDirection direction) {
-        var firstRawMap = getRawMap();
-        var secondRawMap = getRawMap();
-        var absoluteCoordinate = new Coordinate(coordinatedinate.x * 3, coordinatedinate.y * 3);
+        ArrayList<ArrayList<Character>> firstRawMap = getRawMap();
+        ArrayList<ArrayList<Character>> secondRawMap = getRawMap();
+        Coordinate absoluteCoordinate = new Coordinate(coordinatedinate.x * 3, coordinatedinate.y * 3);
 
-        var pixel = masterMap.get(coordinatedinate.y).get(coordinatedinate.x);
+        GameMapPixel pixel = masterMap.get(coordinatedinate.y).get(coordinatedinate.x);
 
         Coordinate startFirstCoordinate = null;
         Coordinate startSecondCoordinate = null;
@@ -346,15 +346,15 @@ public class GameMap {
                 
         }
 
-        var firstResult = floodFill(firstRawMap, startFirstCoordinate.x, startFirstCoordinate.y);
-        var secondResult = floodFill(secondRawMap, startSecondCoordinate.x, startSecondCoordinate.y);
+        FloodFillResult firstResult = floodFill(firstRawMap, startFirstCoordinate.x, startFirstCoordinate.y);
+        FloodFillResult secondResult = floodFill(secondRawMap, startSecondCoordinate.x, startSecondCoordinate.y);
 
 
         transformRawMap(firstRawMap, Player.symbol, Grass.symbol);
         transformRawMap(secondRawMap, Player.symbol, Grass.symbol);
 
-        var firstMasterMap = fromRawMap(firstResult.result);
-        var secondMasterMap = fromRawMap(secondResult.result);
+        GameMap firstMasterMap = fromRawMap(firstResult.result);
+        GameMap secondMasterMap = fromRawMap(secondResult.result);
 
         if (!firstResult.isSuccess) {
             if (secondMasterMap.evaluatePercent(Grass.symbol) > 80) {
@@ -374,7 +374,7 @@ public class GameMap {
         }
 
 
-        var cmp = firstMasterMap.compareTo(secondMasterMap);
+        Integer cmp = firstMasterMap.compareTo(secondMasterMap);
 
         if (cmp == 0) {
             masterMap = firstMasterMap.masterMap;
@@ -410,7 +410,7 @@ public class GameMap {
         character.get(y).set(x, Player.symbol);
 
         while (queue.size() > 0) {
-            var last = queue.get(queue.size() - 1);
+            Coordinate last = queue.get(queue.size() - 1);
             queue.remove(queue.size() - 1);
             if (isValid(character, last.x - 1, last.y)) {
                 if (character.get(last.y).get(last.x - 1) == WormEnemy.symbol || character.get(last.y).get(last.x - 1) == BeetleEnermy.symbol) {
@@ -485,7 +485,7 @@ public class GameMap {
     }
 
     public ArrayList<BaseGameObject> parse(App app) {
-        var objects = new ArrayList<BaseGameObject>();
+        ArrayList<BaseGameObject> objects = new ArrayList<BaseGameObject>();
         Wall wall = null;
         Grass grass = null;
         Player player = null;
@@ -493,7 +493,7 @@ public class GameMap {
         ArrayList<BaseGameObject> powerUps = new ArrayList<>();
         for (int i = 0; i < masterMap.size(); i += 1) {
             for (int j = 0; j < masterMap.get(0).size(); j += 1) {
-                var character = masterMap.get(i).get(j);
+                GameMapPixel character = masterMap.get(i).get(j);
                 if (character.symbol == Player.symbol) {
                     if (player == null) {
                         player = new Player(app);
@@ -513,7 +513,7 @@ public class GameMap {
                     wall.addCoordinate(new Coordinate(j, i));
                 }
                 if (character.symbol == WormEnemy.symbol) {
-                    var worm = new WormEnemy(app);
+                    WormEnemy worm = new WormEnemy(app);
                     switch (character.state) {
                         case topLeft:
                             worm.moveDirection = EnemyMoveDirection.topLeft;
@@ -533,7 +533,7 @@ public class GameMap {
                     enemies.add(worm);
                 }
                 if (character.symbol == BeetleEnermy.symbol) {
-                    var beetle = new BeetleEnermy(app);
+                    BeetleEnermy beetle = new BeetleEnermy(app);
                     switch (character.state) {
                         case topLeft:
                             beetle.moveDirection = EnemyMoveDirection.topLeft;
@@ -557,7 +557,7 @@ public class GameMap {
                         wall = new Wall(app);
                     }
                     wall.addCoordinate(new Coordinate(j, i));
-                    var ant = new AntEnemy(app);
+                    AntEnemy ant = new AntEnemy(app);
                     switch (character.state) {
                         case topLeft:
                             ant.direction = MoveDirection.up;
@@ -577,7 +577,7 @@ public class GameMap {
                     enemies.add(ant);
                 }
                 if (character.symbol == SlowEnemyPowerUp.symbol) {
-                    var powerUp = new SlowEnemyPowerUp(app);
+                    SlowEnemyPowerUp powerUp = new SlowEnemyPowerUp(app);
                     powerUp.coordinatedinates = new ArrayList<>();
                     powerUp.addCoordinate(new Coordinate(j, i));
                     powerUps.add(powerUp);
@@ -594,9 +594,9 @@ public class GameMap {
     }
 
     public void clear() {
-        var newMasterMap = new ArrayList<ArrayList<Character>>();
+        ArrayList<ArrayList<Character>> newMasterMap = new ArrayList<ArrayList<Character>>();
         for (int i = 0; i < GameUtils.MAP_HEIGHT * 3; i++) {
-            var line = new ArrayList<Character>();
+            ArrayList<Character> line = new ArrayList<Character>();
             for (int j = 0; j < GameUtils.MAP_WIDTH * 3; j++) {
                 line.add(' ');
             }
@@ -621,7 +621,7 @@ public class GameMap {
     public void transformRawMap(ArrayList<ArrayList<Character>> characters, Character from, Character to) {
         for (int i = 0; i < characters.size(); i++) {
             for (int j = 0; j < characters.get(0).size(); j++) {
-                var map = characters.get(i);
+                ArrayList<Character> map = characters.get(i);
                 if (map.get(j) == from) {
                     map.set(j, to);
                     characters.set(i, map);
@@ -634,7 +634,7 @@ public class GameMap {
     public void transform(Character from, Character to) {
         for (int i = 0; i < masterMap.size(); i++) {
             for (int j = 0; j < masterMap.get(0).size(); j++) {
-                var map = masterMap.get(i);
+                ArrayList<GameMapPixel> map = masterMap.get(i);
                 if (map.get(j).symbol == from) {
                     map.set(j, new GameMapPixel(to, PixelState.full));
                     masterMap.set(i, map);

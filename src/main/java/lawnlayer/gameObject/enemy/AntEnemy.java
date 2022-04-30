@@ -29,7 +29,7 @@ public class AntEnemy extends BaseGameObject {
     }
 
     private void onFrameUpdate() {
-        var canRefresh = frameCount % GameUtils.FPS == GameUtils.FPS - 1;
+        boolean canRefresh = frameCount % GameUtils.FPS == GameUtils.FPS - 1;
         if (canRefresh) {
             frameCount = 0;
         } else {
@@ -45,7 +45,7 @@ public class AntEnemy extends BaseGameObject {
     @Override
     protected void drawCoordinates() {
         for (Coordinate coordinate : coordinatedinates) {
-            var transformedCoor = GameUtils.transformCoor(coordinate);
+            Coordinate transformedCoor = GameUtils.transformCoor(coordinate);
             app.fill(32, 102, 21);
             app.rect(transformedCoor.x, transformedCoor.y, 20, 20);
         }
@@ -60,7 +60,7 @@ public class AntEnemy extends BaseGameObject {
     }
 
     private void onAntMove() {
-        var coordinate = coordinatedinates.get(0);
+        Coordinate coordinate = coordinatedinates.get(0);
         if (coordinate.x == 0 && coordinate.y == GameUtils.MAP_HEIGHT - 1) {
             direction = MoveDirection.right;
         }

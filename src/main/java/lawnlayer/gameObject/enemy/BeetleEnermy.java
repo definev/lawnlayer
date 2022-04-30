@@ -18,7 +18,7 @@ public class BeetleEnermy extends WormEnemy {
     @Override
     protected void drawCoordinates() {
         for (Coordinate coordinate : coordinatedinates) {
-            var transformedCoor = GameUtils.transformCoor(coordinate);
+            Coordinate transformedCoor = GameUtils.transformCoor(coordinate);
             app.image(App.beetle, transformedCoor.x, transformedCoor.y, 20, 20);
         }
     }

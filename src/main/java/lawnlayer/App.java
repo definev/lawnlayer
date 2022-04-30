@@ -156,7 +156,7 @@ public class App extends PApplet {
 
         if (currentLevel == null) {
             currentLevel = 0;
-            var level = levelConfigs.get(currentLevel);
+            LevelConfig level = levelConfigs.get(currentLevel);
             configGameMap(level);
         }
         if (queueObjects != null) {

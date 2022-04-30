@@ -24,7 +24,7 @@ public class GameUtils {
     public static final int FPS = 60;
 
     public static ArrayList<BaseGameObject> load(App app, String path) throws IOException {
-        var boards = new ArrayList<ArrayList<Character>>();
+        ArrayList<ArrayList<Character>> boards = new ArrayList<ArrayList<Character>>();
         File file = new File(path);
 
         // Creating an object of BufferedReader class
@@ -43,11 +43,11 @@ public class GameUtils {
             boards.add(board);
         }
 
-        var objects = new ArrayList<BaseGameObject>();
+        ArrayList<BaseGameObject> objects = new ArrayList<BaseGameObject>();
 
         for (Integer i = 0; i < boards.size(); i += 1) {
             for (Integer j = 0; j < boards.get(0).size(); j += 1) {
-                var character = boards.get(i).get(j);
+                Character character = boards.get(i).get(j);
                 if (character == Wall.symbol) {
                     Wall concrete = null;
                     for (BaseGameObject object : objects) {

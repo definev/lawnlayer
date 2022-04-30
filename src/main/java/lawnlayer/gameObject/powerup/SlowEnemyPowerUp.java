@@ -27,18 +27,18 @@ public class SlowEnemyPowerUp extends BaseGameObject {
     TimerTask task = new TimerTask() {
         @Override
         public void run() {
-            var game = app;
+            App game = app;
             for (BaseGameObject baseGameObject : game.objects) {
                 if (baseGameObject.className == "WormEnemy") {
-                    var worm = (WormEnemy) baseGameObject;
+                    WormEnemy worm = (WormEnemy) baseGameObject;
                     worm.setSlowdown(0);
                 }
                 if (baseGameObject.className == "BeetleEnemy") {
-                    var beetle = (BeetleEnermy) baseGameObject;
+                    BeetleEnermy beetle = (BeetleEnermy) baseGameObject;
                     beetle.setSlowdown(0);
                 }
                 if (baseGameObject.className == "AntEnemy") {
-                    var ant = (AntEnemy) baseGameObject;
+                    AntEnemy ant = (AntEnemy) baseGameObject;
                     ant.setSlowdown(0);
                 }
             }
@@ -55,18 +55,18 @@ public class SlowEnemyPowerUp extends BaseGameObject {
     @Override
     protected void onCollision(BaseGameObject object, ArrayList<Coordinate> points) {
         if (object.className == "Player") {
-            var game = app;
+            App game = app;
             for (BaseGameObject baseGameObject : game.objects) {
                 if (baseGameObject.className == "WormEnemy") {
-                    var worm = (WormEnemy) baseGameObject;
+                    WormEnemy worm = (WormEnemy) baseGameObject;
                     worm.setSlowdown(10);
                 }
                 if (baseGameObject.className == "BeetleEnemy") {
-                    var beetle = (BeetleEnermy) baseGameObject;
+                    BeetleEnermy beetle = (BeetleEnermy) baseGameObject;
                     beetle.setSlowdown(10);
                 }
                 if (baseGameObject.className == "AntEnemy") {
-                    var ant = (AntEnemy) baseGameObject;
+                    AntEnemy ant = (AntEnemy) baseGameObject;
                     ant.setSlowdown(10);
                 }
             }
@@ -78,7 +78,7 @@ public class SlowEnemyPowerUp extends BaseGameObject {
     @Override
     protected void drawCoordinates() {
         for (Coordinate coordinate : coordinatedinates) {
-            var transformedCoor = GameUtils.transformCoor(coordinate);
+            Coordinate transformedCoor = GameUtils.transformCoor(coordinate);
             app.image(App.slowPowerUp, transformedCoor.x, transformedCoor.y, 20, 20);
         }
     }

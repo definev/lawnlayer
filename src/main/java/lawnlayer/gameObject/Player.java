@@ -29,8 +29,8 @@ public class Player extends BaseGameObject {
     Boolean isDead = false;
 
     Boolean isInSafeZone() {
-        var lawnlayer = app;
-        var inSafeZone = false;
+        App lawnlayer = app;
+        boolean inSafeZone = false;
         for (BaseGameObject object : lawnlayer.objects) {
             if (object.className == "Wall" || object.className == "Grass") {
                 ArrayList<Coordinate> coordinatesCommon = new ArrayList(coordinatedinates);
@@ -95,10 +95,10 @@ public class Player extends BaseGameObject {
     }
 
     private void onMovingUpdate() {
-        var canRefresh = frameCount % REFRESH_FRAME == REFRESH_FRAME - 1;
+        boolean canRefresh = frameCount % REFRESH_FRAME == REFRESH_FRAME - 1;
         if (direction != MoveDirection.none && canRefresh) {
-            var last = coordinatedinates.get(coordinatedinates.size() - 1);
-            var newDirection = last.move(direction);
+            Coordinate last = coordinatedinates.get(coordinatedinates.size() - 1);
+            Coordinate newDirection = last.move(direction);
 
             if (newDirection.isOutOfBounds()) {
                 direction = MoveDirection.none;
@@ -141,7 +141,7 @@ public class Player extends BaseGameObject {
             markRelive();
             return;
         }
-        var canRefresh = frameCount % DEAD_FRAME == DEAD_FRAME - 1;
+        boolean canRefresh = frameCount % DEAD_FRAME == DEAD_FRAME - 1;
         if (canRefresh) {
             redFlags.add(redFlags.size());
         }
@@ -149,7 +149,7 @@ public class Player extends BaseGameObject {
 
     /// FRAME COUNTING
     private void onFrameUpdate() {
-        var canRefresh = frameCount % GameUtils.FPS == GameUtils.FPS - 1;
+        boolean canRefresh = frameCount % GameUtils.FPS == GameUtils.FPS - 1;
         if (canRefresh) {
             frameCount = 0;
         } else {
@@ -174,8 +174,8 @@ public class Player extends BaseGameObject {
         }
 
         for (int i = 0; i < coordinatedinates.size(); i += 1) {
-            var coordinate = coordinatedinates.get(i);
-            var transformedCoor = GameUtils.transformCoor(coordinate);
+            Coordinate coordinate = coordinatedinates.get(i);
+            Coordinate transformedCoor = GameUtils.transformCoor(coordinate);
             if (i == coordinatedinates.size() - 1) {
                 app.image(App.ball, transformedCoor.x, transformedCoor.y, 20, 20);
             } else {
@@ -207,9 +207,9 @@ public class Player extends BaseGameObject {
             if (coordinatedinates.size() < 2) return;
             GameMap cloneMap = (app).masterMap.clone();
 
-            var before = coordinatedinates.get(coordinatedinates.size() - 2);
-            var after = coordinatedinates.get(coordinatedinates.size() - 1);
-            var lastDirection = GameUtils.getDirection(direction, before, after);
+            Coordinate before = coordinatedinates.get(coordinatedinates.size() - 2);
+            Coordinate after = coordinatedinates.get(coordinatedinates.size() - 1);
+            MoveDirection lastDirection = GameUtils.getDirection(direction, before, after);
 
             GameMap transformMap = cloneMap.clone();
             transformMap.relativeFloodFill(before, lastDirection);
@@ -219,7 +219,7 @@ public class Player extends BaseGameObject {
             newMap.transform(Player.symbol, Grass.symbol);
             coordinatedinates = new ArrayList();
             coordinatedinates.add(after);
-            var queueObjects = newMap.parse(app);
+            ArrayList<BaseGameObject> queueObjects = newMap.parse(app);
             queueObjects.add(this);
             (app).queueObjects = queueObjects;
         }
