@@ -6,6 +6,7 @@ import java.util.Random;
 import lawnlayer.App;
 import lawnlayer.utils.Coordinate;
 import lawnlayer.utils.EnemyMoveDirection;
+import lawnlayer.utils.GameMapPixel;
 import lawnlayer.utils.GameUtils;
 import lawnlayer.utils.MoveDirection;
 import processing.core.PApplet;
@@ -31,7 +32,7 @@ public class Worm extends GameObject {
     }
 
     private void onFrameUpdate() {
-        var canRefresh = frameCount % App.FPS == App.FPS - 1;
+        boolean canRefresh = frameCount % App.FPS == App.FPS - 1;
         if (canRefresh) {
             frameCount = 0;
         } else {
@@ -47,9 +48,9 @@ public class Worm extends GameObject {
 
     @Override
     void onCollision(GameObject object, ArrayList<Coordinate> points) {
-        var point = points.get(0);
+        Coordinate point = points.get(0);
         if (object.debugName == "Wall" || object.debugName == "Grass") {
-            var last = coors.get(0);
+            Coordinate last = coors.get(0);
 
             coors = new ArrayList<>();
             switch (moveDirection) {
@@ -70,37 +71,37 @@ public class Worm extends GameObject {
             if (point.isEdge()) {
                 moveDirection = GameUtils.getOppositeMove(moveDirection);
             } else {
-                var game = (App) app;
+                App game = (App) app;
 
-                var bottomValid = false;
-                var bottomLast = point.move(MoveDirection.down);
-                var upValid = false;
-                var upLast = point.move(MoveDirection.up);
-                var leftValid = false;
-                var leftLast = point.move(MoveDirection.left);
-                var rightValid = false;
-                var rightLast = point.move(MoveDirection.right);
+                Boolean bottomValid = false;
+                Coordinate bottomLast = point.move(MoveDirection.down);
+                Boolean upValid = false;
+                Coordinate upLast = point.move(MoveDirection.up);
+                Boolean leftValid = false;
+                Coordinate leftLast = point.move(MoveDirection.left);
+                Boolean rightValid = false;
+                Coordinate rightLast = point.move(MoveDirection.right);
 
                 if (!bottomLast.isOutOfBounds()) {
-                    var pixel = game.masterMap.get(bottomLast);
+                    GameMapPixel pixel = game.masterMap.get(bottomLast);
                     if (pixel.symbol == Wall.symbol || pixel.symbol == Grass.symbol) {
                         bottomValid = true;
                     }
                 }
                 if (!upLast.isOutOfBounds()) {
-                    var pixel = game.masterMap.get(upLast);
+                    GameMapPixel pixel = game.masterMap.get(upLast);
                     if (pixel.symbol == Wall.symbol || pixel.symbol == Grass.symbol) {
                         upValid = true;
                     }
                 }
                 if (!leftLast.isOutOfBounds()) {
-                    var pixel = game.masterMap.get(leftLast);
+                    GameMapPixel pixel = game.masterMap.get(leftLast);
                     if (pixel.symbol == Wall.symbol || pixel.symbol == Grass.symbol) {
                         leftValid = true;
                     }
                 }
                 if (!rightLast.isOutOfBounds()) {
-                    var pixel = game.masterMap.get(rightLast);
+                    GameMapPixel pixel = game.masterMap.get(rightLast);
                     if (pixel.symbol == Wall.symbol || pixel.symbol == Grass.symbol) {
                         rightValid = true;
                     }
@@ -151,7 +152,7 @@ public class Worm extends GameObject {
     @Override
     protected void drawCoors() {
         for (Coordinate coor : coors) {
-            var transformedCoor = GameUtils.transformCoor(coor);
+            Coordinate transformedCoor = GameUtils.transformCoor(coor);
             app.image(App.worm, transformedCoor.x, transformedCoor.y, 20, 20);
         }
     }
@@ -166,7 +167,7 @@ public class Worm extends GameObject {
 
     private void onWormMove() {
         if (canUpdate()) {
-            var last = coors.get(0);
+            Coordinate last = coors.get(0);
             coors = new ArrayList<>();
             switch (moveDirection) {
                 case topLeft:

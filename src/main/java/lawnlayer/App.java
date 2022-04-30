@@ -78,7 +78,7 @@ public class App extends PApplet {
         try {
             lives = config.lives;
             masterMap.clear();
-            objects = GameUtils.load(this, this.getClass().getResource(config.outlay).getPath());
+            objects = GameUtils.load(this, "./" + config.outlay);
             for (EnemyConfig enemyConfig : config.enemies) {
                 if (enemyConfig.type == 0) {
                     objects.add(new Worm(this));
@@ -126,9 +126,9 @@ public class App extends PApplet {
             clear();
             background(95, 60, 33);
             textSize(64);
-            text("You win!!!", 600, 720);
+            text("You win!!!", 1080 / 2, 720 / 2);
             textSize(32);
-            text("Press Space to play next level!", 1080 / 2, 720 / 2+ 80);
+            text("Press space to play next level!", 1080 / 2, 720 / 2+ 80);
             if (keyPressed) {
                 if (key == ' ') {
                     nextLevel();
@@ -143,7 +143,7 @@ public class App extends PApplet {
             textAlign(CENTER);
             text("You lose!!!", 1080 / 2, 720 / 2);
             textSize(32);
-            text("Press Space to play again!", 1080 / 2, 720 / 2+ 80);
+            text("Press space to play again!", 1080 / 2, 720 / 2+ 80);
             if (keyPressed) {
                 if (key == ' ') {
                     retryLevel();
@@ -154,7 +154,7 @@ public class App extends PApplet {
 
         if (currentLevel == null) {
             currentLevel = 0;
-            var level = levelConfigs.get(currentLevel);
+            LevelConfig level = levelConfigs.get(currentLevel);
             configGameMap(level);
         }
         if (queueObjects != null) {

@@ -29,7 +29,7 @@ public class Ant extends GameObject {
     }
 
     private void onFrameUpdate() {
-        var canRefresh = frameCount % App.FPS == App.FPS - 1;
+        boolean canRefresh = frameCount % App.FPS == App.FPS - 1;
         if (canRefresh) {
             frameCount = 0;
         } else {
@@ -45,7 +45,7 @@ public class Ant extends GameObject {
     @Override
     protected void drawCoors() {
         for (Coordinate coor : coors) {
-            var transformedCoor = GameUtils.transformCoor(coor);
+            Coordinate transformedCoor = GameUtils.transformCoor(coor);
             app.color(12, 213, 221, 1);
             app.rect(transformedCoor.x, transformedCoor.y, 20, 20);
         }
@@ -60,7 +60,7 @@ public class Ant extends GameObject {
     }
 
     private void onAntMove() {
-        var coor = coors.get(0);
+        Coordinate coor = coors.get(0);
         if (coor.x == 0 && coor.y == GameUtils.MAP_HEIGHT - 1) {
             direction = MoveDirection.right;
         }

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import lawnlayer.App;
 import lawnlayer.gameObject.GameObject;
 import lawnlayer.gameObject.Grass;
-import lawnlayer.gameObject.Player;
 import lawnlayer.gameObject.Wall;
 import processing.core.PApplet;
 
@@ -18,7 +17,7 @@ public class GameUtils {
     public static final Integer MAP_WIDTH = 64;
 
     public static ArrayList<GameObject> load(PApplet app, String path) throws IOException {
-        var boards = new ArrayList<ArrayList<Character>>();
+        ArrayList<ArrayList<Character>> boards = new ArrayList<ArrayList<Character>>();
         File file = new File(path);
 
         // Creating an object of BufferedReader class
@@ -37,11 +36,11 @@ public class GameUtils {
             boards.add(board);
         }
 
-        var objects = new ArrayList<GameObject>();
+        ArrayList<GameObject> objects = new ArrayList<GameObject>();
 
         for (Integer i = 0; i < boards.size(); i += 1) {
             for (Integer j = 0; j < boards.get(0).size(); j += 1) {
-                var character = boards.get(i).get(j);
+                Character character = boards.get(i).get(j);
                 if (character == Wall.symbol) {
                     Wall concrete = null;
                     for (GameObject object : objects) {

@@ -120,8 +120,8 @@ public class GameMapPixel {
     }
 
     public static void updateMap(ArrayList<ArrayList<Character>> newMasterMap, Coordinate coordinate, Character symbol) {
-        var initX = coordinate.x * 3;
-        var initY = coordinate.y * 3;
+        Integer initX = coordinate.x * 3;
+        Integer initY = coordinate.y * 3;
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -131,10 +131,9 @@ public class GameMapPixel {
     }
 
     public static GameMapPixel getPixel(ArrayList<ArrayList<Character>> newMasterMap, Coordinate coordinate) {
-        var initX = coordinate.x * 3;
-        var initY = coordinate.y * 3;
+        Integer initX = coordinate.x * 3;
+        Integer initY = coordinate.y * 3;
 
-        GameMapPixel pixel = null;
         ArrayList<ArrayList<Character>> characters = new ArrayList<>();
 
         for (int i = 0; i < 3; i++) {
@@ -155,8 +154,8 @@ public class GameMapPixel {
     }
 
     public static void updateMap(ArrayList<ArrayList<Character>> newMasterMap, Coordinate coordinate, GameMapPixel pixel) {
-        var initX = coordinate.x * 3;
-        var initY = coordinate.y * 3;
+        Integer initX = coordinate.x * 3;
+        Integer initY = coordinate.y * 3;
 
         switch (pixel.state) {
             case full:

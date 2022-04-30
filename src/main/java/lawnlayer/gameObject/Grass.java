@@ -16,7 +16,7 @@ public class Grass extends GameObject {
     @Override
     protected void drawCoors() {
         for (Coordinate coor : coors) {
-            var transformedCoor = GameUtils.transformCoor(coor);
+            Coordinate transformedCoor = GameUtils.transformCoor(coor);
             app.image(App.grass, transformedCoor.x, transformedCoor.y, 20, 20);
         }
     }

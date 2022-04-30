@@ -20,7 +20,7 @@ public class Beetle extends Worm {
     @Override
     protected void drawCoors() {
         for (Coordinate coor : coors) {
-            var transformedCoor = GameUtils.transformCoor(coor);
+            Coordinate transformedCoor = GameUtils.transformCoor(coor);
             app.image(App.beetle, transformedCoor.x, transformedCoor.y, 20, 20);
         }
     }
