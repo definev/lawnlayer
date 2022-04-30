@@ -49,7 +49,7 @@ public class SlowEnemyPowerUp extends BaseGameObject {
 
     @Override
     protected void initCoordinate() {
-        coordinatedinates.add((app).masterMap.randomizeLocation());
+        coordinates.add((app).masterMap.randomizeLocation());
     }
 
     @Override
@@ -77,7 +77,7 @@ public class SlowEnemyPowerUp extends BaseGameObject {
 
     @Override
     protected void drawCoordinates() {
-        for (Coordinate coordinate : coordinatedinates) {
+        for (Coordinate coordinate : coordinates) {
             Coordinate transformedCoor = GameUtils.transformCoor(coordinate);
             app.image(App.slowPowerUp, transformedCoor.x, transformedCoor.y, 20, 20);
         }

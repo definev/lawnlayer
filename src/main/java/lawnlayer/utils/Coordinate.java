@@ -32,12 +32,12 @@ public class Coordinate {
     }
 
     public Coordinate move(MoveDirection direction, Integer times) {
-        Coordinate coordinatedinate = this;
+        Coordinate coordinate = this;
         for (int i = 0; i < times; i++) {
-            coordinatedinate = coordinatedinate.move(direction);
+            coordinate = coordinate.move(direction);
         }
 
-        return coordinatedinate;
+        return coordinate;
     }
 
     public Boolean isOutOfBounds() {

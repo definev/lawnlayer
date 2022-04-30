@@ -46,6 +46,8 @@ public class App extends PApplet {
     public ArrayList<BaseGameObject> deleteQueue = new ArrayList<>();
     public ArrayList<BaseGameObject> insertQueue = new ArrayList<>();
 
+    public boolean isRunningTest = false;
+
     Timer timer = new Timer();
 
     public void nextLevel() {
@@ -97,6 +99,17 @@ public class App extends PApplet {
             e.printStackTrace();
         }
     }
+
+
+    public void testSettings() {
+        isRunningTest = true;
+        try {
+            levelConfigs = LevelConfig.getConfigs(configPath);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void setup() {
         frameRate(GameUtils.FPS);

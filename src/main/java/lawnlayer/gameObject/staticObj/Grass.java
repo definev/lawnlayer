@@ -14,7 +14,7 @@ public class Grass extends BaseGameObject {
 
     @Override
     protected void drawCoordinates() {
-        for (Coordinate coordinate : coordinatedinates) {
+        for (Coordinate coordinate : coordinates) {
             Coordinate transformedCoor = GameUtils.transformCoor(coordinate);
             app.image(App.grass, transformedCoor.x, transformedCoor.y, 20, 20);
         }

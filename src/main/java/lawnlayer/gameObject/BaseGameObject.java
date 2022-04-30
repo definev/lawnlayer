@@ -34,22 +34,22 @@ public abstract class BaseGameObject {
     }
 
     public void draw() {
-        drawCoordinates();
+        if (!app.isRunningTest) drawCoordinates();
         onCollisionCheck();
     }
 
     public void addCoordinate(Coordinate coordinate) {
-        coordinatedinates.add(coordinate);
+        coordinates.add(coordinate);
     }
 
-    public ArrayList<Coordinate> coordinatedinates = new ArrayList();
+    public ArrayList<Coordinate> coordinates = new ArrayList();
     public String className;
     protected Boolean checkCollision = false;
 
     public ArrayList<Coordinate> collideAt(BaseGameObject object) {
         ArrayList<Coordinate> points = new ArrayList<Coordinate>();
-        for (Coordinate coordinate : object.coordinatedinates) {
-            if (coordinatedinates.contains(coordinate)) {
+        for (Coordinate coordinate : object.coordinates) {
+            if (coordinates.contains(coordinate)) {
                 points.add(coordinate);
             }
         }

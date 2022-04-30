@@ -33,10 +33,10 @@ public class Player extends BaseGameObject {
         boolean inSafeZone = false;
         for (BaseGameObject object : lawnlayer.objects) {
             if (object.className == "Wall" || object.className == "Grass") {
-                ArrayList<Coordinate> coordinatesCommon = new ArrayList(coordinatedinates);
-                coordinatesCommon.retainAll(object.coordinatedinates);
+                ArrayList<Coordinate> coordinatesCommon = new ArrayList(coordinates);
+                coordinatesCommon.retainAll(object.coordinates);
 
-                if (!coordinatesCommon.isEmpty() && coordinatedinates.size() == 1) {
+                if (!coordinatesCommon.isEmpty() && coordinates.size() == 1) {
                     inSafeZone = true;
                     break;
                 }
@@ -55,7 +55,7 @@ public class Player extends BaseGameObject {
 
     private void markRelive() {
         isDead = false;
-        coordinatedinates = new ArrayList();
+        coordinates = new ArrayList();
         initCoordinate();
         (app).lives -= 1;
     }
@@ -97,7 +97,7 @@ public class Player extends BaseGameObject {
     private void onMovingUpdate() {
         boolean canRefresh = frameCount % REFRESH_FRAME == REFRESH_FRAME - 1;
         if (direction != MoveDirection.none && canRefresh) {
-            Coordinate last = coordinatedinates.get(coordinatedinates.size() - 1);
+            Coordinate last = coordinates.get(coordinates.size() - 1);
             Coordinate newDirection = last.move(direction);
 
             if (newDirection.isOutOfBounds()) {
@@ -105,16 +105,16 @@ public class Player extends BaseGameObject {
                 return;
             }
 
-            if (coordinatedinates.contains(newDirection)) {
+            if (coordinates.contains(newDirection)) {
                 markDied();
                 return;
             }
 
             if (isInSafeZone()) {
-                coordinatedinates = new ArrayList<>();
+                coordinates = new ArrayList<>();
             }
 
-            coordinatedinates.add(newDirection);
+            coordinates.add(newDirection);
         }
     }
 
@@ -123,10 +123,10 @@ public class Player extends BaseGameObject {
             redFlags = new ArrayList<>();
         }
 
-        boolean canUpdate = frameCount % 3 == 2 && coordinatedinates.size() > MIN_SIZE_FOR_START_MARK_RED;
+        boolean canUpdate = frameCount % 3 == 2 && coordinates.size() > MIN_SIZE_FOR_START_MARK_RED;
         if (canUpdate) {
             if (direction == MoveDirection.none) {
-                if (redFlags.size() >= coordinatedinates.size() - 1) {
+                if (redFlags.size() >= coordinates.size() - 1) {
                     markDied();
                 } else {
                     redFlags.add(redFlags.size());
@@ -137,7 +137,7 @@ public class Player extends BaseGameObject {
 
     /// ON DEAD
     private void onDeadUpdate() {
-        if (redFlags.size() == coordinatedinates.size()) {
+        if (redFlags.size() == coordinates.size()) {
             markRelive();
             return;
         }
@@ -160,23 +160,15 @@ public class Player extends BaseGameObject {
 
     @Override
     protected void initCoordinate() {
-        coordinatedinates.add(new Coordinate(0, 0));
+        coordinates.add(new Coordinate(0, 0));
     }
 
     @Override
     protected void drawCoordinates() {
-        if (isDead.equals(false)) {
-            onKeyboardUpdate();
-            onMovingUpdate();
-            onRedFlagUpdate();
-        } else {
-            onDeadUpdate();
-        }
-
-        for (int i = 0; i < coordinatedinates.size(); i += 1) {
-            Coordinate coordinate = coordinatedinates.get(i);
+        for (int i = 0; i < coordinates.size(); i += 1) {
+            Coordinate coordinate = coordinates.get(i);
             Coordinate transformedCoor = GameUtils.transformCoor(coordinate);
-            if (i == coordinatedinates.size() - 1) {
+            if (i == coordinates.size() - 1) {
                 app.image(App.ball, transformedCoor.x, transformedCoor.y, 20, 20);
             } else {
                 if (redFlags.contains(i)) {
@@ -191,6 +183,13 @@ public class Player extends BaseGameObject {
 
     @Override
     public void draw() {
+        if (isDead.equals(false)) {
+            onKeyboardUpdate();
+            onMovingUpdate();
+            onRedFlagUpdate();
+        } else {
+            onDeadUpdate();
+        }
         super.draw();
         onFrameUpdate();
     }
@@ -204,21 +203,20 @@ public class Player extends BaseGameObject {
         }
         if (object.className.equals("Grass") || object.className.equals("Wall")) {
             if (isInSafeZone()) return;
-            if (coordinatedinates.size() < 2) return;
+            if (coordinates.size() < 2) return;
             GameMap cloneMap = (app).masterMap.clone();
 
-            Coordinate before = coordinatedinates.get(coordinatedinates.size() - 2);
-            Coordinate after = coordinatedinates.get(coordinatedinates.size() - 1);
-            MoveDirection lastDirection = GameUtils.getDirection(direction, before, after);
+            Coordinate before = coordinates.get(coordinates.size() - 2);
+            Coordinate after = coordinates.get(coordinates.size() - 1);
 
             GameMap transformMap = cloneMap.clone();
-            transformMap.relativeFloodFill(before, lastDirection);
+            transformMap.relativeFloodFill(before);
 
             GameMap newMap = transformMap;
 
             newMap.transform(Player.symbol, Grass.symbol);
-            coordinatedinates = new ArrayList();
-            coordinatedinates.add(after);
+            coordinates = new ArrayList();
+            coordinates.add(after);
             ArrayList<BaseGameObject> queueObjects = newMap.parse(app);
             queueObjects.add(this);
             (app).queueObjects = queueObjects;

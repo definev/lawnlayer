@@ -39,12 +39,12 @@ public class AntEnemy extends BaseGameObject {
 
     @Override
     protected void initCoordinate() {
-        coordinatedinates.add(new Coordinate(31, 31));
+        coordinates.add(new Coordinate(31, 31));
     }
 
     @Override
     protected void drawCoordinates() {
-        for (Coordinate coordinate : coordinatedinates) {
+        for (Coordinate coordinate : coordinates) {
             Coordinate transformedCoor = GameUtils.transformCoor(coordinate);
             app.fill(32, 102, 21);
             app.rect(transformedCoor.x, transformedCoor.y, 20, 20);
@@ -56,11 +56,10 @@ public class AntEnemy extends BaseGameObject {
         super.draw();
         onAntMove();
         onFrameUpdate();
-
     }
 
     private void onAntMove() {
-        Coordinate coordinate = coordinatedinates.get(0);
+        Coordinate coordinate = coordinates.get(0);
         if (coordinate.x == 0 && coordinate.y == GameUtils.MAP_HEIGHT - 1) {
             direction = MoveDirection.right;
         }
@@ -75,8 +74,8 @@ public class AntEnemy extends BaseGameObject {
         }
 
         if (canUpdate()) {
-            coordinatedinates.remove(0);
-            coordinatedinates.add(coordinate.move(direction));
+            coordinates.remove(0);
+            coordinates.add(coordinate.move(direction));
         }
     }
 }

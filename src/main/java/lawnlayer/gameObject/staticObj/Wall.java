@@ -14,7 +14,7 @@ public class Wall extends BaseGameObject {
 
     @Override
     protected void drawCoordinates() {
-        for (Coordinate coordinate : coordinatedinates) {
+        for (Coordinate coordinate : coordinates) {
             Coordinate transformedCoor = GameUtils.transformCoor(coordinate);
             app.image(App.concrete, transformedCoor.x, transformedCoor.y, 20, 20);
         }

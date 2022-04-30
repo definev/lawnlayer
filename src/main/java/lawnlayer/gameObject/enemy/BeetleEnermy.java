@@ -17,7 +17,7 @@ public class BeetleEnermy extends WormEnemy {
 
     @Override
     protected void drawCoordinates() {
-        for (Coordinate coordinate : coordinatedinates) {
+        for (Coordinate coordinate : coordinates) {
             Coordinate transformedCoor = GameUtils.transformCoor(coordinate);
             app.image(App.beetle, transformedCoor.x, transformedCoor.y, 20, 20);
         }
@@ -28,7 +28,7 @@ public class BeetleEnermy extends WormEnemy {
         super.onCollision(object, points);
 
         if (object.className.equals("Grass")) {
-            object.coordinatedinates.removeAll(points);
+            object.coordinates.removeAll(points);
         }
     }
 }

@@ -27,13 +27,9 @@ public class GameUtils {
         ArrayList<ArrayList<Character>> boards = new ArrayList<ArrayList<Character>>();
         File file = new File(path);
 
-        // Creating an object of BufferedReader class
         BufferedReader br = new BufferedReader(new FileReader(file));
 
-        // Declaring a string variable
         String st;
-        // Condition holds true till
-        // there is character in a string
         while ((st = br.readLine()) != null) {
             ArrayList<Character> board = new ArrayList();
 

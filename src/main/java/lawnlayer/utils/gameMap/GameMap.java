@@ -1,5 +1,9 @@
 package lawnlayer.utils.gameMap;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Vector;
@@ -30,12 +34,32 @@ public class GameMap {
         this.masterMap = masterMap;
     }
 
-    public GameMap(String path) {
-        load(path);
+    public static GameMap load(String path) throws IOException {
+        ArrayList<ArrayList<Character>> boards = new ArrayList<ArrayList<Character>>();
+        File file = new File(path);
+
+        BufferedReader br = new BufferedReader(new FileReader(file));
+
+        String st;
+        while ((st = br.readLine()) != null) {
+            ArrayList<Character> board = new ArrayList();
+
+            for (int j = 0; j < st.length(); j++) {
+                board.add(j, st.charAt(j));
+            }
+            if (board.size() < GameUtils.MAP_WIDTH * 3) {
+                for (int i = 0; i < GameUtils.MAP_WIDTH * 3 - board.size(); i++) {
+                    board.add(i, ' ');
+                }
+            }
+            boards.add(board);
+        }
+
+        return fromRawMap(boards);
     }
 
-    public GameMapPixel get(Coordinate coordinatedinate) {
-        return masterMap.get(coordinatedinate.y).get(coordinatedinate.x);
+    public GameMapPixel get(Coordinate coordinate) {
+        return masterMap.get(coordinate.y).get(coordinate.x);
     }
 
     public Coordinate randomizeLocation() {
@@ -86,9 +110,6 @@ public class GameMap {
         return new GameMap(masterMap);
     }
 
-    private void load(String path) {
-    }
-
     public GameMap clone() {
         GameMap newMap = new GameMap();
         ArrayList<ArrayList<GameMapPixel>> newMasterMap = new ArrayList<ArrayList<GameMapPixel>>();
@@ -108,27 +129,27 @@ public class GameMap {
     public void fill(BaseGameObject object) {
         switch (object.className) {
             case "Player":
-                if (object.coordinatedinates.size() == 1) {
-                    masterMap.get(object.coordinatedinates.get(0).y).set(object.coordinatedinates.get(0).x, new GameMapPixel(Player.symbol, PixelState.full));
+                if (object.coordinates.size() == 1) {
+                    masterMap.get(object.coordinates.get(0).y).set(object.coordinates.get(0).x, new GameMapPixel(Player.symbol, PixelState.full));
                     return;
                 }
-                for (int i = 0; i < object.coordinatedinates.size(); i++) {
-                    Coordinate coordinate = object.coordinatedinates.get(i);
+                for (int i = 0; i < object.coordinates.size(); i++) {
+                    Coordinate coordinate = object.coordinates.get(i);
                     Coordinate prev = null;
                     Coordinate next = null;
                     ArrayList<GameMapPixel> map = masterMap.get(coordinate.y);
 
                     if (i > 0) {
-                        prev = object.coordinatedinates.get(i - 1);
+                        prev = object.coordinates.get(i - 1);
                     }
-                    if (i < object.coordinatedinates.size() - 1) {
-                        next = object.coordinatedinates.get(i + 1);
+                    if (i < object.coordinates.size() - 1) {
+                        next = object.coordinates.get(i + 1);
                     }
 
                     if (i == 0) {
                         prev = predictDirection(coordinate, GameUtils.getDirection(MoveDirection.left, coordinate, next));
                     }
-                    if (i == object.coordinatedinates.size() - 1) {
+                    if (i == object.coordinates.size() - 1) {
                         next = predictDirection(coordinate, GameUtils.getDirection(MoveDirection.left, coordinate, prev));
                     }
 
@@ -183,7 +204,7 @@ public class GameMap {
                 }
                 break;
             case "WormEnemy":
-                for (Coordinate coordinate : object.coordinatedinates) {
+                for (Coordinate coordinate : object.coordinates) {
                     ArrayList<GameMapPixel> map = masterMap.get(coordinate.y);
                     WormEnemy worm = (WormEnemy) object;
 
@@ -204,7 +225,7 @@ public class GameMap {
                 }
                 break;
             case "BeetleEnemy":
-                for (Coordinate coordinate : object.coordinatedinates) {
+                for (Coordinate coordinate : object.coordinates) {
                     ArrayList<GameMapPixel> map = masterMap.get(coordinate.y);
                     BeetleEnermy beetle = (BeetleEnermy) object;
 
@@ -225,21 +246,21 @@ public class GameMap {
                 }
                 break;
             case "Grass":
-                for (Coordinate coordinate : object.coordinatedinates) {
+                for (Coordinate coordinate : object.coordinates) {
                     ArrayList<GameMapPixel> map = masterMap.get(coordinate.y);
                     map.set(coordinate.x, new GameMapPixel(Grass.symbol, PixelState.full));
                     masterMap.set(coordinate.y, map);
                 }
                 break;
             case "Wall":
-                for (Coordinate coordinate : object.coordinatedinates) {
+                for (Coordinate coordinate : object.coordinates) {
                     ArrayList<GameMapPixel> map = masterMap.get(coordinate.y);
                     map.set(coordinate.x, new GameMapPixel(Wall.symbol, PixelState.full));
                     masterMap.set(coordinate.y, map);
                 }
                 break;
             case "AntEnemy":
-                for (Coordinate coordinate : object.coordinatedinates) {
+                for (Coordinate coordinate : object.coordinates) {
                     ArrayList<GameMapPixel> map = masterMap.get(coordinate.y);
                     AntEnemy ant = (AntEnemy) object;
                     switch (ant.direction) {
@@ -260,7 +281,7 @@ public class GameMap {
                 }
                 break;
             case "SlowEnemyPowerUp":
-                for (Coordinate coordinate : object.coordinatedinates) {
+                for (Coordinate coordinate : object.coordinates) {
                     ArrayList<GameMapPixel> map = masterMap.get(coordinate.y);
                     map.set(coordinate.x, new GameMapPixel(SlowEnemyPowerUp.symbol, PixelState.full));
                     masterMap.set(coordinate.y, map);
@@ -304,12 +325,12 @@ public class GameMap {
         return prev;
     }
 
-    public void relativeFloodFill(Coordinate coordinatedinate, MoveDirection direction) {
+    public void relativeFloodFill(Coordinate coordinate) {
         ArrayList<ArrayList<Character>> firstRawMap = getRawMap();
         ArrayList<ArrayList<Character>> secondRawMap = getRawMap();
-        Coordinate absoluteCoordinate = new Coordinate(coordinatedinate.x * 3, coordinatedinate.y * 3);
+        Coordinate absoluteCoordinate = new Coordinate(coordinate.x * 3, coordinate.y * 3);
 
-        GameMapPixel pixel = masterMap.get(coordinatedinate.y).get(coordinatedinate.x);
+        GameMapPixel pixel = masterMap.get(coordinate.y).get(coordinate.x);
 
         Coordinate startFirstCoordinate = null;
         Coordinate startSecondCoordinate = null;
@@ -383,6 +404,7 @@ public class GameMap {
         } else {
             masterMap = firstMasterMap.masterMap;
         }
+
     }
 
     private boolean isValid(ArrayList<ArrayList<Character>> character, Integer x, Integer y) {
@@ -528,7 +550,7 @@ public class GameMap {
                             worm.moveDirection = EnemyMoveDirection.bottomRight;
                             break;
                     }
-                    worm.coordinatedinates = new ArrayList<>();
+                    worm.coordinates = new ArrayList<>();
                     worm.addCoordinate(new Coordinate(j, i));
                     enemies.add(worm);
                 }
@@ -548,7 +570,7 @@ public class GameMap {
                             beetle.moveDirection = EnemyMoveDirection.bottomRight;
                             break;
                     }
-                    beetle.coordinatedinates = new ArrayList<>();
+                    beetle.coordinates = new ArrayList<>();
                     beetle.addCoordinate(new Coordinate(j, i));
                     enemies.add(beetle);
                 }
@@ -572,13 +594,13 @@ public class GameMap {
                             ant.direction = MoveDirection.right;
                             break;
                     }
-                    ant.coordinatedinates = new ArrayList<>();
+                    ant.coordinates = new ArrayList<>();
                     ant.addCoordinate(new Coordinate(j, i));
                     enemies.add(ant);
                 }
                 if (character.symbol == SlowEnemyPowerUp.symbol) {
                     SlowEnemyPowerUp powerUp = new SlowEnemyPowerUp(app);
-                    powerUp.coordinatedinates = new ArrayList<>();
+                    powerUp.coordinates = new ArrayList<>();
                     powerUp.addCoordinate(new Coordinate(j, i));
                     powerUps.add(powerUp);
                 }

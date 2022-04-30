@@ -45,7 +45,7 @@ public class WormEnemy extends BaseGameObject {
 
     @Override
     protected void initCoordinate() {
-        coordinatedinates.add((app).masterMap.randomizeLocation());
+        coordinates.add((app).masterMap.randomizeLocation());
         moveDirection = EnemyMoveDirection.values()[new Random().nextInt(EnemyMoveDirection.values().length)];
     }
 
@@ -53,21 +53,21 @@ public class WormEnemy extends BaseGameObject {
     protected void onCollision(BaseGameObject object, ArrayList<Coordinate> points) {
         Coordinate point = points.get(0);
         if (object.className == "Wall" || object.className == "Grass") {
-            Coordinate last = coordinatedinates.get(0);
+            Coordinate last = coordinates.get(0);
 
-            coordinatedinates = new ArrayList<>();
+            coordinates = new ArrayList<>();
             switch (moveDirection) {
                 case topLeft:
-                    coordinatedinates.add(new Coordinate(last.x + 1, last.y + 1));
+                    coordinates.add(new Coordinate(last.x + 1, last.y + 1));
                     break;
                 case topRight:
-                    coordinatedinates.add(new Coordinate(last.x - 1, last.y + 1));
+                    coordinates.add(new Coordinate(last.x - 1, last.y + 1));
                     break;
                 case bottomRight:
-                    coordinatedinates.add(new Coordinate(last.x - 1, last.y - 1));
+                    coordinates.add(new Coordinate(last.x - 1, last.y - 1));
                     break;
                 case bottomLeft:
-                    coordinatedinates.add(new Coordinate(last.x + 1, last.y - 1));
+                    coordinates.add(new Coordinate(last.x + 1, last.y - 1));
                     break;
             }
 
@@ -154,7 +154,7 @@ public class WormEnemy extends BaseGameObject {
 
     @Override
     protected void drawCoordinates() {
-        for (Coordinate coordinate : coordinatedinates) {
+        for (Coordinate coordinate : coordinates) {
             Coordinate transformedCoor = GameUtils.transformCoor(coordinate);
             app.image(App.worm, transformedCoor.x, transformedCoor.y, 20, 20);
         }
@@ -162,7 +162,7 @@ public class WormEnemy extends BaseGameObject {
 
     @Override
     public void draw() {
-        drawCoordinates();
+        if (!app.isRunningTest) drawCoordinates();
         onWormMove();
         onCollisionCheck();
         onFrameUpdate();
@@ -170,20 +170,20 @@ public class WormEnemy extends BaseGameObject {
 
     private void onWormMove() {
         if (canUpdate()) {
-            Coordinate last = coordinatedinates.get(0);
-            coordinatedinates = new ArrayList<>();
+            Coordinate last = coordinates.get(0);
+            coordinates = new ArrayList<>();
             switch (moveDirection) {
                 case topLeft:
-                    coordinatedinates.add(new Coordinate(last.x - 1, last.y - 1));
+                    coordinates.add(new Coordinate(last.x - 1, last.y - 1));
                     break;
                 case topRight:
-                    coordinatedinates.add(new Coordinate(last.x + 1, last.y - 1));
+                    coordinates.add(new Coordinate(last.x + 1, last.y - 1));
                     break;
                 case bottomRight:
-                    coordinatedinates.add(new Coordinate(last.x + 1, last.y + 1));
+                    coordinates.add(new Coordinate(last.x + 1, last.y + 1));
                     break;
                 case bottomLeft:
-                    coordinatedinates.add(new Coordinate(last.x - 1, last.y + 1));
+                    coordinates.add(new Coordinate(last.x - 1, last.y + 1));
                     break;
             }
         }
